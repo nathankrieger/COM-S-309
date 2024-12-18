@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookmarksFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.frontend</a> &gt; <span class="el_source">BookmarksFragment.java</span></div><h1>BookmarksFragment.java</h1><pre class="source lang-java linenums">package com.frontend;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.androidexample.R;
+import com.frontend.models.Bookmark;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BookmarksFragment extends Fragment {
+
+    private RequestQueue requestQueue;
+    private LinearLayout bookmarksContainer;
+    private int _userID;
+    private List&lt;Bookmark&gt; bookmarks;
+
+<span class="nc" id="L39">    public BookmarksFragment() {</span>
+        // Required empty public constructor
+<span class="nc" id="L41">    }</span>
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+<span class="nc" id="L47">        View view = inflater.inflate(R.layout.activity_bookmarks, container, false);</span>
+
+        // Get the userID passed as an argument
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        if (getArguments() != null) {</span>
+<span class="nc" id="L51">            _userID = getArguments().getInt(&quot;userID&quot;, -1);</span>
+        }
+
+<span class="nc" id="L54">        bookmarksContainer = view.findViewById(R.id.bookmarks_container);</span>
+<span class="nc" id="L55">        requestQueue = Volley.newRequestQueue(requireContext());</span>
+<span class="nc" id="L56">        bookmarks = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L58">        Button addBookmarkButton = view.findViewById(R.id.addBookmarkButton);</span>
+<span class="nc" id="L59">        addBookmarkButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+                // Navigate to AddBookmarkFragment (implement this fragment)
+                // FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                // transaction.replace(R.id.fragment_container, new AddBookmarkFragment());
+                // transaction.addToBackStack(null);
+                // transaction.commit();
+<span class="nc" id="L67">            }</span>
+        });
+
+        // Fetch bookmarks if a valid userID is provided
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (_userID != -1) {</span>
+<span class="nc" id="L72">            fetchBookmarks(_userID);</span>
+        } else {
+<span class="nc" id="L74">            Toast.makeText(getActivity(), &quot;User ID not found!&quot;, Toast.LENGTH_SHORT).show();</span>
+        }
+
+<span class="nc" id="L77">        return view;</span>
+    }
+
+    // Method to fetch bookmarks from the API
+    private void fetchBookmarks(int userID) {
+<span class="nc" id="L82">        String url = &quot;https://9cffdc1e-96bc-4840-aeb5-6a52770b36d0.mock.pstmn.io/bookmarks/getbookmarks/&quot; + userID;</span>
+
+<span class="nc" id="L84">        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,</span>
+<span class="nc" id="L85">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+<span class="nc" id="L88">                        bookmarks.clear();</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">                        for (int i = 0; i &lt; response.length(); i++) {</span>
+                            try {
+<span class="nc" id="L91">                                JSONObject bookmarkJson = response.getJSONObject(i);</span>
+<span class="nc" id="L92">                                Bookmark bookmark = new Bookmark(</span>
+<span class="nc" id="L93">                                        bookmarkJson.getInt(&quot;id&quot;),</span>
+<span class="nc" id="L94">                                        bookmarkJson.getInt(&quot;movie_id&quot;),</span>
+<span class="nc" id="L95">                                        bookmarkJson.getString(&quot;name&quot;),</span>
+<span class="nc" id="L96">                                        bookmarkJson.getInt(&quot;user_id&quot;)</span>
+                                );
+<span class="nc" id="L98">                                bookmarks.add(bookmark);</span>
+<span class="nc" id="L99">                            } catch (JSONException e) {</span>
+<span class="nc" id="L100">                                e.printStackTrace();</span>
+<span class="nc" id="L101">                                Toast.makeText(getActivity(), &quot;Error parsing bookmark&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L102">                            }</span>
+                        }
+<span class="nc bnc" id="L104" title="All 2 branches missed.">                        if (bookmarks.isEmpty()) {</span>
+<span class="nc" id="L105">                            displayNoBookmarksMessage();</span>
+                        } else {
+<span class="nc" id="L107">                            displayBookmarks(bookmarks);</span>
+                        }
+<span class="nc" id="L109">                    }</span>
+<span class="nc" id="L110">                }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L113">                Toast.makeText(getActivity(), &quot;Error fetching bookmarks: &quot; + error.getMessage(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L114">            }</span>
+        });
+<span class="nc" id="L116">        requestQueue.add(request);</span>
+<span class="nc" id="L117">    }</span>
+
+    // Method to display the list of bookmarks
+    private void displayBookmarks(List&lt;Bookmark&gt; bookmarks) {
+<span class="nc" id="L121">        bookmarksContainer.removeAllViews();</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        for (Bookmark bookmark : bookmarks) {</span>
+<span class="nc" id="L123">            LinearLayout bookmarkItem = new LinearLayout(requireContext());</span>
+<span class="nc" id="L124">            bookmarkItem.setOrientation(LinearLayout.HORIZONTAL);</span>
+<span class="nc" id="L125">            bookmarkItem.setPadding(10, 10, 10, 10);</span>
+
+<span class="nc" id="L127">            TextView bookmarkTextView = new TextView(requireContext());</span>
+<span class="nc" id="L128">            bookmarkTextView.setText(&quot;Bookmark Name: &quot; + bookmark.getName() + &quot;\nMovie ID: &quot; + bookmark.getMovieID());</span>
+<span class="nc" id="L129">            bookmarkTextView.setPadding(0, 20, 0, 20);</span>
+
+<span class="nc" id="L131">            Button removeButton = new Button(requireContext());</span>
+<span class="nc" id="L132">            removeButton.setText(&quot;Remove&quot;);</span>
+<span class="nc" id="L133">            removeButton.setPadding(20, 10, 20, 10);</span>
+
+            // Set up the remove button functionality
+<span class="nc" id="L136">            removeButton.setOnClickListener(new View.OnClickListener() {</span>
+                @Override
+                public void onClick(View v) {
+<span class="nc" id="L139">                    deleteBookmark(bookmark.getID());</span>
+<span class="nc" id="L140">                }</span>
+            });
+
+<span class="nc" id="L143">            bookmarkItem.addView(bookmarkTextView);</span>
+<span class="nc" id="L144">            bookmarkItem.addView(removeButton);</span>
+<span class="nc" id="L145">            bookmarksContainer.addView(bookmarkItem);</span>
+<span class="nc" id="L146">        }</span>
+<span class="nc" id="L147">    }</span>
+
+    // Display message if no bookmarks found
+    private void displayNoBookmarksMessage() {
+<span class="nc" id="L151">        bookmarksContainer.removeAllViews();</span>
+<span class="nc" id="L152">        TextView noBookmarksMessage = new TextView(requireContext());</span>
+<span class="nc" id="L153">        noBookmarksMessage.setText(&quot;No bookmarks found.&quot;);</span>
+<span class="nc" id="L154">        noBookmarksMessage.setPadding(20, 20, 20, 20);</span>
+<span class="nc" id="L155">        noBookmarksMessage.setTextSize(18);</span>
+<span class="nc" id="L156">        bookmarksContainer.addView(noBookmarksMessage);</span>
+<span class="nc" id="L157">    }</span>
+
+    // Method to delete a bookmark using the API
+    private void deleteBookmark(int bookmarkId) {
+<span class="nc" id="L161">        String url = &quot;https://9cffdc1e-96bc-4840-aeb5-6a52770b36d0.mock.pstmn.io/bookmarks/deletebookmark/&quot; + bookmarkId;</span>
+
+<span class="nc" id="L163">        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url, null,</span>
+<span class="nc" id="L164">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L167">                        Toast.makeText(getActivity(), &quot;Bookmark removed successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L168">                        fetchBookmarks(_userID);  // Refresh the bookmarks after deletion</span>
+<span class="nc" id="L169">                    }</span>
+<span class="nc" id="L170">                }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L173">                Toast.makeText(getActivity(), &quot;Error removing bookmark: &quot; + error.getMessage(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L174">            }</span>
+        });
+<span class="nc" id="L176">        requestQueue.add(request);</span>
+<span class="nc" id="L177">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

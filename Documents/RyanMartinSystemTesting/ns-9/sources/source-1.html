@@ -1,0 +1,208 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > User</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone.Users</a>
+</div>
+
+<h1>Coverage Summary for Class: User (onetoone.Users)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">User</td>
+<td class="coverageStat">
+  <span class="percent">
+    43.8%
+  </span>
+  <span class="absValue">
+    (7/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (7/21)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">User$HibernateInstantiator$U3hW6Uuz</td>
+  </tr>
+  <tr>
+    <td class="name">User$HibernateProxy$vxpVdWn0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    43.8%
+  </span>
+  <span class="absValue">
+    (7/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (7/21)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone.Users;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnore;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import onetoone.Bookmarks.Bookmark;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;
+&nbsp;@Entity
+&nbsp;public class User {
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private int id;
+&nbsp;    private String name;
+&nbsp;    private String password;
+&nbsp;    private String emailId;
+&nbsp;    private boolean ifActive;
+&nbsp;    private int roleId;
+&nbsp;
+&nbsp;    @OneToMany(mappedBy = &quot;user&quot;)
+&nbsp;    @JsonIgnore // Prevents recursion
+&nbsp;    private List&lt;Bookmark&gt; bookmarks;
+&nbsp;
+<b class="nc">&nbsp;    public User(String name, String emailId, String password) {</b>
+<b class="nc">&nbsp;        this.name = name;</b>
+<b class="nc">&nbsp;        this.emailId = emailId;</b>
+<b class="nc">&nbsp;        this.password = password;</b>
+<b class="nc">&nbsp;        this.roleId = 1;</b>
+<b class="nc">&nbsp;        this.ifActive = false;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public User() {</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(int id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getName() {
+<b class="fc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setName(String name) {
+<b class="nc">&nbsp;        this.name = name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getPassword() {
+<b class="fc">&nbsp;        return password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPassword(String password) {
+<b class="nc">&nbsp;        this.password = password;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getEmailId() {
+<b class="fc">&nbsp;        return emailId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setEmailId(String emailId) {
+<b class="nc">&nbsp;        this.emailId = emailId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean getIsActive() {
+<b class="fc">&nbsp;        return ifActive;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setIfActive(boolean ifActive) {
+<b class="nc">&nbsp;        this.ifActive = ifActive;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getRoleId() {
+<b class="fc">&nbsp;        return roleId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setRoleId(int id) {
+<b class="nc">&nbsp;        this.roleId = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Bookmark&gt; getBookmarks() {
+<b class="nc">&nbsp;        return bookmarks;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setBookmarks(List&lt;Bookmark&gt; bookmarks) {
+<b class="nc">&nbsp;        this.bookmarks = bookmarks;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-25 15:49</div>
+</div>
+</body>
+</html>

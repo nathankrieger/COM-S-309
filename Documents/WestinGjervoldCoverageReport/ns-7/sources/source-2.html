@@ -1,0 +1,251 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > MovieViewCountController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone.MovieViewCount</a>
+</div>
+
+<h1>Coverage Summary for Class: MovieViewCountController (onetoone.MovieViewCount)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MovieViewCountController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.2%
+  </span>
+  <span class="absValue">
+    (1/24)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone.MovieViewCount;
+&nbsp;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class MovieViewCountController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    MovieViewCountRepository movieViewCountRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get all movie view counts
+&nbsp;     *
+&nbsp;     * @return A list of movie view count records
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get all movie view counts&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched all movie view counts&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = List.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/MovieViewCount&quot;)
+&nbsp;    List&lt;MovieViewCount&gt; getAllMovieViewCount() {
+<b class="nc">&nbsp;        return movieViewCountRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get movie view count by ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the movie view count
+&nbsp;     * @return The movie view count record, or an error record if not found
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get movie view count by ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched movie view count by ID&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = MovieViewCount.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Movie view count not found&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/MovieViewCount/{id}&quot;)
+&nbsp;    MovieViewCount getViewCountById(@PathVariable int id) {
+<b class="nc">&nbsp;        if(movieViewCountRepository.findById(id) == null){</b>
+<b class="nc">&nbsp;            MovieViewCount notExist = new MovieViewCount();</b>
+<b class="nc">&nbsp;            notExist.setId(-1);</b>
+<b class="nc">&nbsp;            return notExist;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return movieViewCountRepository.findById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get movie view count by movie ID
+&nbsp;     *
+&nbsp;     * @param movieId The ID of the movie
+&nbsp;     * @return The movie view count, or a new record with default view count if not found
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get movie view count by movie ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched movie view count by movie ID&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = MovieViewCount.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Movie view count not found&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/ViewCountById/{movieId}&quot;)
+&nbsp;    MovieViewCount getViewCountByMovieId(@PathVariable int movieId) {
+<b class="nc">&nbsp;        if(movieViewCountRepository.findByApiID(movieId) == null){</b>
+<b class="nc">&nbsp;            MovieViewCount notExist = new MovieViewCount();</b>
+<b class="nc">&nbsp;            notExist.setViewCount(1);</b>
+<b class="nc">&nbsp;            notExist.setApiId(movieId);</b>
+<b class="nc">&nbsp;            return notExist;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return movieViewCountRepository.findByApiID(movieId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new movie view count
+&nbsp;     *
+&nbsp;     * @param movieViewCount The movie view count record to create
+&nbsp;     * @return A success message
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Create a new movie view count&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;201&quot;, description = &quot;Successfully created movie view count&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = MovieViewCount.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid request body&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @PostMapping(path = &quot;/MovieViewCount&quot;)
+&nbsp;    String createUser(@RequestBody MovieViewCount movieViewCount) {
+<b class="nc">&nbsp;        if (movieViewCount == null)</b>
+<b class="nc">&nbsp;            return &quot;Failure&quot;;</b>
+<b class="nc">&nbsp;        movieViewCountRepository.save(movieViewCount);</b>
+<b class="nc">&nbsp;        return &quot;Success&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Update a movie view count by ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the movie view count
+&nbsp;     * @param request The new movie view count details
+&nbsp;     * @return The updated movie view count record
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Update movie view count by ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully updated movie view count&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = MovieViewCount.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Movie view count not found&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @PutMapping(&quot;/MovieViewCount/{id}&quot;)
+&nbsp;    MovieViewCount updateMovieViewCount(@PathVariable int id, @RequestBody MovieViewCount request) {
+<b class="nc">&nbsp;        MovieViewCount movieViewCount = movieViewCountRepository.findById(id);</b>
+<b class="nc">&nbsp;        if (movieViewCount == null)</b>
+<b class="nc">&nbsp;            return null;</b>
+<b class="nc">&nbsp;        movieViewCountRepository.save(request);</b>
+<b class="nc">&nbsp;        return movieViewCountRepository.findById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete a movie view count by ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the movie view count to delete
+&nbsp;     * @return A success message
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Delete movie view count by ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully deleted movie view count&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = String.class)) })
+&nbsp;    })
+&nbsp;    @DeleteMapping(path = &quot;/MovieViewCount/{id}&quot;)
+&nbsp;    String deleteRole(@PathVariable int id) {
+<b class="nc">&nbsp;        movieViewCountRepository.deleteById(id);</b>
+<b class="nc">&nbsp;        return &quot;Success&quot;;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 14:33</div>
+</div>
+</body>
+</html>

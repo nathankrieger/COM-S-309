@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Movies</title>
+</head>
+<body>
+<h1>Browse Movies</h1>
+
+<!-- Search bar for entering movie titles -->
+<input type="text" id="searchInput" placeholder="Search for a movie...">
+<button onclick="searchMovies()">Search</button>
+
+<div id="movieList"></div>
+
+<script>
+    // Base URL for API requests
+    const apiUrl = 'http://coms-3090-022.class.las.iastate.edu:8080/api/movies';
+
+    // Function to fetch popular movies and display them
+    async function fetchPopularMovies() {
+        try {
+            const response = await fetch(`${apiUrl}/popular`);
+            if (!response.ok) throw new Error(`Error: ${response.status}`);
+            const data = await response.json();
+            displayMovies(data.results);
+        } catch (error) {
+            console.error("Error fetching popular movies:", error);
+        }
+    }
+
+    // Function to search movies by title
+    async function searchMovies() {
+        const query = document.getElementById('searchInput').value;
+        try {
+            const response = await fetch(`${apiUrl}/search?query=${encodeURIComponent(query)}`);
+            if (!response.ok) throw new Error(`Error: ${response.status}`);
+            const data = await response.json();
+            displayMovies(data.results);
+        } catch (error) {
+            console.error("Error fetching searched movies:", error);
+        }
+    }
+
+    // Function to display movies in the movieList div
+    function displayMovies(movies) {
+        const movieList = document.getElementById('movieList');
+        movieList.innerHTML = ''; // Clear existing movies
+        movies.forEach(movie => {
+            const movieElement = document.createElement('div');
+            movieElement.textContent = movie.title; // Display movie title
+            movieList.appendChild(movieElement);
+        });
+    }
+
+    // Fetch and display popular movies on page load
+    fetchPopularMovies();
+</script>
+</body>
+</html>

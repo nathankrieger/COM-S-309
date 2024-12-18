@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/advanced_search_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Advanced Search"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="16dp" />
+
+        <CheckBox
+            android:id="@+id/include_adult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Include Adult Content"
+            android:checked="false" />
+
+        <CheckBox
+            android:id="@+id/include_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Include Video Content"
+            android:checked="false" />
+
+        <EditText
+            android:id="@+id/language"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Language (e.g., en-US)"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/primary_release_date_gte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Release Date From (yyyy-mm-dd)"
+            android:inputType="date" />
+
+        <EditText
+            android:id="@+id/primary_release_date_lte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Release Date To (yyyy-mm-dd)"
+            android:inputType="date" />
+
+        <!--<EditText
+            android:id="@+id/release_date_gte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Release Start Date (yyyy-mm-dd)"
+            android:inputType="date" />
+
+        <EditText
+            android:id="@+id/release_date_lte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Release End Date (yyyy-mm-dd)"
+            android:inputType="date" />-->
+
+        <!--<EditText
+            android:id="@+id/sort_by"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Sort By (e.g., popularity.desc)"
+            android:inputType="text" />-->
+
+        <EditText
+            android:id="@+id/vote_average_gte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Minimum Vote Average"
+            android:inputType="numberDecimal" />
+
+        <!--<EditText
+            android:id="@+id/vote_average_lte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Maximum Vote Average"
+            android:inputType="numberDecimal" />-->
+
+        <EditText
+            android:id="@+id/with_cast"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Cast (comma-separated IDs)"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/with_genres"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Genres (comma-separated)"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/with_keywords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Keywords (comma-separated)"
+            android:inputType="text" />
+
+        <!--<EditText
+            android:id="@+id/with_runtime_gte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Minimum Runtime (minutes)"
+            android:inputType="number" />-->
+
+        <EditText
+            android:id="@+id/with_runtime_lte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Maximum Runtime (minutes)"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/year"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Year"
+            android:inputType="number" />
+
+        <Button
+            android:id="@+id/advanced_search_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- EditText for entering User ID to update role (updated ID) -->
+    <EditText
+        android:id="@+id/adminUpdateUserRoleIdEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter User ID to update role"
+        android:inputType="number" />
+
+    <!-- EditText for entering new role (updated ID) -->
+    <EditText
+        android:id="@+id/adminUpdateUserRoleEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter new role" />
+
+    <!-- Button to update the role of the user (updated ID) -->
+    <Button
+        android:id="@+id/adminUpdateRoleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Promote User" />
+</LinearLayout>

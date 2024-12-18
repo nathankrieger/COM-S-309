@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SignupFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.frontend</a> &gt; <span class="el_source">SignupFragment.java</span></div><h1>SignupFragment.java</h1><pre class="source lang-java linenums">package com.example.frontend;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+<span class="nc" id="L23">public class SignupFragment extends Fragment {</span>
+
+    private EditText usernameEditText;  // define username edittext variable
+    private EditText passwordEditText;  // define password edittext variable
+    private EditText confirmEditText;   // define confirm edittext variable
+    private Button loginButton;         // define login button variable
+    private Button signupButton;        // define signup button variable
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+<span class="nc" id="L35">        View view = inflater.inflate(R.layout.fragment_signup, container, false);</span>
+
+        // Initialize UI elements
+<span class="nc" id="L38">        usernameEditText = view.findViewById(R.id.signup_username_edt);</span>
+<span class="nc" id="L39">        passwordEditText = view.findViewById(R.id.signup_password_edt);</span>
+<span class="nc" id="L40">        confirmEditText = view.findViewById(R.id.signup_confirm_edt);</span>
+<span class="nc" id="L41">        loginButton = view.findViewById(R.id.signup_login_btn);</span>
+<span class="nc" id="L42">        signupButton = view.findViewById(R.id.signup_signup_btn);</span>
+
+        // Click listener on login button
+<span class="nc" id="L45">        loginButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+                // Switch to LoginFragment (assuming it's handled with FragmentTransaction)
+<span class="nc" id="L49">                getActivity().getSupportFragmentManager().beginTransaction()</span>
+<span class="nc" id="L50">                        .replace(R.id.fragment_container, new LoginFragment()) // Assuming container ID is fragment_container</span>
+<span class="nc" id="L51">                        .addToBackStack(null) // Allows user to go back to previous fragment</span>
+<span class="nc" id="L52">                        .commit();</span>
+<span class="nc" id="L53">            }</span>
+        });
+
+        // Click listener on signup button
+<span class="nc" id="L57">        signupButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+                // Grab strings from user inputs
+<span class="nc" id="L61">                String username = usernameEditText.getText().toString();</span>
+<span class="nc" id="L62">                String password = passwordEditText.getText().toString();</span>
+<span class="nc" id="L63">                String confirm = confirmEditText.getText().toString();</span>
+
+<span class="nc bnc" id="L65" title="All 2 branches missed.">                if (password.length() &lt; 6) {</span>
+<span class="nc" id="L66">                    Toast.makeText(getContext(), &quot;Password must be at least 6 characters long&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">                } else if (password.equals(confirm)) {</span>
+<span class="nc" id="L68">                    Toast.makeText(getContext(), &quot;Signing up&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L69">                    signupUser(username, password); // Call the signup method</span>
+                } else {
+<span class="nc" id="L71">                    Toast.makeText(getContext(), &quot;Passwords do not match&quot;, Toast.LENGTH_LONG).show();</span>
+                }
+<span class="nc" id="L73">            }</span>
+        });
+
+<span class="nc" id="L76">        return view;</span>
+    }
+
+    // Method to handle user signup
+    private void signupUser(String username, String password) {
+<span class="nc" id="L81">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/users/create&quot;;</span>
+
+<span class="nc" id="L83">        JSONObject jsonObject = new JSONObject();</span>
+        try {
+<span class="nc" id="L85">            jsonObject.put(&quot;name&quot;, username);</span>
+<span class="nc" id="L86">            jsonObject.put(&quot;password&quot;, password);</span>
+<span class="nc" id="L87">        } catch (JSONException e) {</span>
+<span class="nc" id="L88">            e.printStackTrace();</span>
+<span class="nc" id="L89">            Toast.makeText(getContext(), &quot;Error creating JSON object&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L90">            return;</span>
+<span class="nc" id="L91">        }</span>
+
+        // Volley POST request
+<span class="nc" id="L94">        RequestQueue requestQueue = Volley.newRequestQueue(getContext());</span>
+<span class="nc" id="L95">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject,</span>
+<span class="nc" id="L96">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Handle success response
+<span class="nc" id="L101">                            String message = response.getString(&quot;message&quot;);</span>
+<span class="nc" id="L102">                            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();</span>
+                            // Redirect to LoginFragment after successful signup
+<span class="nc" id="L104">                            getActivity().getSupportFragmentManager().beginTransaction()</span>
+<span class="nc" id="L105">                                    .replace(R.id.fragment_container, new LoginFragment())</span>
+<span class="nc" id="L106">                                    .addToBackStack(null)</span>
+<span class="nc" id="L107">                                    .commit();</span>
+<span class="nc" id="L108">                        } catch (JSONException e) {</span>
+<span class="nc" id="L109">                            e.printStackTrace();</span>
+<span class="nc" id="L110">                            Toast.makeText(getContext(), &quot;Error processing response&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L111">                        }</span>
+<span class="nc" id="L112">                    }</span>
+                },
+<span class="nc" id="L114">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Handle error response
+<span class="nc" id="L118">                        Toast.makeText(getContext(), &quot;Network error: &quot; + error.getMessage(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L119">                    }</span>
+                }
+        );
+
+<span class="nc" id="L123">        requestQueue.add(jsonObjectRequest);</span>
+<span class="nc" id="L124">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.2</div></body></html>

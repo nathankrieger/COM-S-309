@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieDetailFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.frontend</a> &gt; <span class="el_source">MovieDetailFragment.java</span></div><h1>MovieDetailFragment.java</h1><pre class="source lang-java linenums">package com.frontend;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.androidexample.R;
+import com.frontend.models.User;
+import com.squareup.picasso.Picasso;
+
+import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MovieDetailFragment extends Fragment implements WebSocketListener {
+
+    private static final String ARG_MOVIE_ID = &quot;movieId&quot;;
+    private int movieId;
+
+    // UI elements
+    private ImageView moviePosterImageView;
+    private TextView movieTitleTextView;
+    private TextView movieReleaseDateTextView;
+    private TextView movieViewsTextView;
+    private TextView movieDescriptionTextView;
+    private TextView movieGenresTextView;
+    private EditText commentInput;
+    private Button submitCommentButton;
+    private RecyclerView commentsRecyclerView;
+
+<span class="nc" id="L54">    private List&lt;String&gt; commentsList = new ArrayList&lt;&gt;();</span>
+    private CommentsAdapter commentsAdapter;
+
+    private RequestQueue requestQueue;
+
+
+    ImageButton bookmarkButton;
+<span class="nc" id="L61">    boolean isBookmarked = false; // Initial state; consider loading from saved state.</span>
+
+
+<span class="nc" id="L64">    public MovieDetailFragment() {</span>
+        // Required empty public constructor
+<span class="nc" id="L66">    }</span>
+
+    public static MovieDetailFragment newInstance(int movieId) {
+<span class="nc" id="L69">        MovieDetailFragment fragment = new MovieDetailFragment();</span>
+<span class="nc" id="L70">        Bundle args = new Bundle();</span>
+<span class="nc" id="L71">        args.putInt(ARG_MOVIE_ID, movieId);</span>
+<span class="nc" id="L72">        fragment.setArguments(args);</span>
+<span class="nc" id="L73">        return fragment;</span>
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L78">        super.onCreate(savedInstanceState);</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        if (getArguments() != null) {</span>
+<span class="nc" id="L80">            movieId = getArguments().getInt(ARG_MOVIE_ID);</span>
+        }
+
+        // Setup WebSocket connection
+<span class="nc" id="L84">        setupWebSocketConnection();</span>
+
+        // Send movie ID via WebSocket
+<span class="nc" id="L87">        sendMovieIdMessage(movieId);</span>
+<span class="nc" id="L88">    }</span>
+
+    private void setupWebSocketConnection() {
+<span class="nc" id="L91">        String userName = UserManager.getInstance().getUser().getUsername();</span>
+<span class="nc" id="L92">        String serverUrl = &quot;ws://coms-3090-022.class.las.iastate.edu:8080/viewCount/&quot; + movieId;</span>
+
+<span class="nc" id="L94">        WebSocketManager.getInstance().connectWebSocket(serverUrl);</span>
+<span class="nc" id="L95">        WebSocketManager.getInstance().setWebSocketListener(this);</span>
+<span class="nc" id="L96">    }</span>
+
+    private void sendMovieIdMessage(int movieId) {
+<span class="nc" id="L99">        WebSocketManager.getInstance().sendMessage(String.valueOf(movieId));</span>
+<span class="nc" id="L100">    }</span>
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+<span class="nc" id="L105">        View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);</span>
+
+        // Initialize UI elements
+<span class="nc" id="L108">        moviePosterImageView = view.findViewById(R.id.movie_poster);</span>
+<span class="nc" id="L109">        movieTitleTextView = view.findViewById(R.id.movie_title);</span>
+<span class="nc" id="L110">        movieViewsTextView = view.findViewById(R.id.movie_views);</span>
+<span class="nc" id="L111">        movieReleaseDateTextView = view.findViewById(R.id.movie_release_date);</span>
+<span class="nc" id="L112">        movieDescriptionTextView = view.findViewById(R.id.movie_description);</span>
+<span class="nc" id="L113">        movieGenresTextView = view.findViewById(R.id.movie_genres);</span>
+<span class="nc" id="L114">        commentInput = view.findViewById(R.id.comment_input);</span>
+<span class="nc" id="L115">        submitCommentButton = view.findViewById(R.id.submit_comment_button);</span>
+<span class="nc" id="L116">        commentsRecyclerView = view.findViewById(R.id.comments_recycler_view);</span>
+
+        // Setup RecyclerView
+<span class="nc" id="L119">        commentsAdapter = new CommentsAdapter(commentsList, null);</span>
+<span class="nc" id="L120">        commentsRecyclerView.setAdapter(commentsAdapter);</span>
+<span class="nc" id="L121">        commentsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));</span>
+
+        // Initialize the RequestQueue only once
+<span class="nc" id="L124">        requestQueue = Volley.newRequestQueue(getContext());</span>
+
+        // Fetch the movie details and image
+<span class="nc" id="L127">        fetchMovieDetails(movieId);</span>
+<span class="nc" id="L128">        fetchMovieImage(movieId);</span>
+<span class="nc" id="L129">        fetchMovieViewCount(movieId);</span>
+<span class="nc" id="L130">        fetchComments();</span>
+
+        // Initialize UI elements
+<span class="nc" id="L133">        bookmarkButton = view.findViewById(R.id.bookmark_button);</span>
+
+        // Initialize other UI components, omitted for brevity...
+
+        // Fetch the initial bookmark state
+<span class="nc" id="L138">        fetchBookmark();</span>
+
+        // Set up the bookmark button click listener
+<span class="nc" id="L141">        bookmarkButton.setOnClickListener(v -&gt; {</span>
+            // Toggle the bookmark status
+<span class="nc bnc" id="L143" title="All 2 branches missed.">            isBookmarked = !isBookmarked;</span>
+<span class="nc" id="L144">            updateBookmarkIcon();</span>
+
+            // Update bookmark status on the server
+<span class="nc bnc" id="L147" title="All 2 branches missed.">            if (isBookmarked) {</span>
+<span class="nc" id="L148">                addBookmark();</span>
+            } else {
+<span class="nc" id="L150">                removeBookmark();</span>
+            }
+<span class="nc" id="L152">        });</span>
+
+<span class="nc" id="L154">        submitCommentButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L155">            String commentText = commentInput.getText().toString();</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">            if (!commentText.isEmpty()) {</span>
+<span class="nc" id="L157">                submitComment(commentText);</span>
+<span class="nc" id="L158">                commentInput.setText(&quot;&quot;);  // Clear input</span>
+            } else {
+<span class="nc" id="L160">                Toast.makeText(getContext(), &quot;Comment cannot be empty&quot;, Toast.LENGTH_SHORT).show();</span>
+            }
+<span class="nc" id="L162">        });</span>
+        /*
+        isBookmarked = true;
+        updateBookmarkIcon();*/
+<span class="nc" id="L166">        return view;</span>
+    }
+
+    // Function to fetch movie details like title and release date
+    private void fetchMovieDetails(int movieId) {
+<span class="nc" id="L171">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/api/movies/&quot; + movieId;</span>
+
+<span class="nc" id="L173">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(</span>
+                Request.Method.GET, url, null,
+                response -&gt; {
+                    try {
+                        // Parse the response
+<span class="nc" id="L178">                        String title = response.getString(&quot;title&quot;);</span>
+<span class="nc" id="L179">                        String releaseDate = response.getString(&quot;release_date&quot;);</span>
+<span class="nc" id="L180">                        String description = response.getString(&quot;overview&quot;);</span>
+
+<span class="nc" id="L182">                        StringBuilder genresBuilder = new StringBuilder();</span>
+<span class="nc" id="L183">                        JSONArray genresArray = response.getJSONArray(&quot;genres&quot;);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                        for (int i = 0; i &lt; genresArray.length(); i++) {</span>
+<span class="nc" id="L185">                            JSONObject genre = genresArray.getJSONObject(i);</span>
+<span class="nc" id="L186">                            genresBuilder.append(genre.getString(&quot;name&quot;));</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">                            if (i &lt; genresArray.length() - 1) {</span>
+<span class="nc" id="L188">                                genresBuilder.append(&quot;, &quot;);</span>
+                            }
+                        }
+<span class="nc" id="L191">                        String genres = genresBuilder.toString();</span>
+
+                        // Update UI elements
+<span class="nc" id="L194">                        movieTitleTextView.setText(title);</span>
+<span class="nc" id="L195">                        movieReleaseDateTextView.setText(releaseDate);</span>
+<span class="nc" id="L196">                        movieDescriptionTextView.setText(description);</span>
+<span class="nc" id="L197">                        movieGenresTextView.setText(genres);</span>
+
+<span class="nc" id="L199">                    } catch (JSONException e) {</span>
+<span class="nc" id="L200">                        e.printStackTrace();</span>
+<span class="nc" id="L201">                        movieTitleTextView.setText(&quot;Error parsing movie details.&quot;);</span>
+<span class="nc" id="L202">                    }</span>
+<span class="nc" id="L203">                },</span>
+<span class="nc" id="L204">                error -&gt; movieTitleTextView.setText(&quot;Failed to load movie details.&quot;)</span>
+        );
+
+<span class="nc" id="L207">        requestQueue.add(jsonObjectRequest);</span>
+<span class="nc" id="L208">    }</span>
+
+    // Function to fetch the movie image URL and load it into the ImageView
+    private void fetchMovieImage(int movieId) {
+<span class="nc" id="L212">        String imageUrl = &quot;http://coms-3090-022.class.las.iastate.edu:8080/api/movies/image/&quot; + movieId;</span>
+
+<span class="nc" id="L214">        StringRequest stringRequest = new StringRequest(</span>
+                Request.Method.GET, imageUrl,
+<span class="nc" id="L216">                response -&gt; Picasso.get().load(response)</span>
+<span class="nc" id="L217">                        .placeholder(R.drawable.placeholder_image)</span>
+<span class="nc" id="L218">                        .error(R.drawable.placeholder_image)</span>
+<span class="nc" id="L219">                        .into(moviePosterImageView),</span>
+<span class="nc" id="L220">                error -&gt; moviePosterImageView.setImageResource(R.drawable.placeholder_image)</span>
+        );
+
+<span class="nc" id="L223">        requestQueue.add(stringRequest);</span>
+<span class="nc" id="L224">    }</span>
+
+    private void fetchMovieViewCount(int movieId) {
+<span class="nc" id="L227">            String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/ViewCountById/&quot; + movieId;</span>
+
+            // Make a GET request to fetch the view count
+<span class="nc" id="L230">            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(</span>
+                    Request.Method.GET, url, null,
+                    response -&gt; {
+                        try {
+                            // Parse the response to get the view count
+<span class="nc" id="L235">                            int viewCount = response.getInt(&quot;viewCount&quot;);</span>
+
+                            // Update the UI with the view count
+<span class="nc" id="L238">                            movieViewsTextView.setText(&quot;Views: &quot; + viewCount);</span>
+<span class="nc" id="L239">                        } catch (JSONException e) {</span>
+<span class="nc" id="L240">                            e.printStackTrace();</span>
+<span class="nc" id="L241">                            movieViewsTextView.setText(&quot;Error loading views.&quot;);</span>
+<span class="nc" id="L242">                        }</span>
+<span class="nc" id="L243">                    },</span>
+                    error -&gt; {
+                        // Handle error and set fallback text
+<span class="nc" id="L246">                        movieViewsTextView.setText(&quot;Failed to load views.&quot;);</span>
+<span class="nc" id="L247">                        Log.e(&quot;fetchMovieViewCount&quot;, &quot;Error fetching movie view count: &quot; + error.getMessage());</span>
+<span class="nc" id="L248">                    }</span>
+            );
+
+        // Add the request to the request queue
+<span class="nc" id="L252">        requestQueue.add(jsonObjectRequest);</span>
+<span class="nc" id="L253">    }</span>
+
+    private void fetchComments() {
+<span class="nc" id="L256">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/comments/movie/&quot; + movieId;  // Replace with your API endpoint</span>
+<span class="nc" id="L257">        List&lt;String&gt; commentsList = new ArrayList&lt;&gt;();  // Initialize an empty list</span>
+
+        // Use Volley to make an API request
+<span class="nc" id="L260">        StringRequest request = new StringRequest(Request.Method.GET, url,</span>
+                response -&gt; {
+                    try {
+                        // Parse the response from the API (assuming it's JSON)
+<span class="nc" id="L264">                        JSONArray commentsArray = new JSONArray(response);</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">                        for (int i = 0; i &lt; commentsArray.length(); i++) {</span>
+<span class="nc" id="L266">                            JSONObject commentObject = commentsArray.getJSONObject(i);</span>
+<span class="nc" id="L267">                            String comment = commentObject.getString(&quot;text&quot;);  // Adjust key based on your API response</span>
+<span class="nc" id="L268">                            commentsList.add(comment);</span>
+                        }
+                        // Update RecyclerView Adapter
+<span class="nc" id="L271">                        CommentsAdapter adapter = new CommentsAdapter(commentsList, null);</span>
+<span class="nc" id="L272">                        commentsRecyclerView.setAdapter(adapter);</span>
+<span class="nc" id="L273">                    } catch (JSONException e) {</span>
+<span class="nc" id="L274">                        e.printStackTrace();</span>
+<span class="nc" id="L275">                    }</span>
+<span class="nc" id="L276">                }, error -&gt; {</span>
+            // Handle error
+<span class="nc" id="L278">            Log.e(&quot;API Error&quot;, error.toString());</span>
+<span class="nc" id="L279">        });</span>
+
+        // Add the request to the Volley request queue
+<span class="nc" id="L282">        Volley.newRequestQueue(getContext()).add(request);</span>
+<span class="nc" id="L283">    }</span>
+
+
+    // Method to update the bookmark icon based on isBookmarked
+    private void updateBookmarkIcon() {
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        int icon = isBookmarked ? R.drawable.baseline_bookmark : R.drawable.baseline_bookmark_border;</span>
+<span class="nc" id="L289">        bookmarkButton.setImageResource(icon);</span>
+<span class="nc" id="L290">    }</span>
+
+    // Method to fetch bookmark status from the server
+    private void fetchBookmark() {
+<span class="nc" id="L294">        int userID = UserManager.getInstance().getUser().getUserID();</span>
+<span class="nc" id="L295">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/bookmarks/&quot; + userID + &quot;/&quot; + movieId;</span>
+
+<span class="nc" id="L297">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(</span>
+                Request.Method.GET, url, null,
+                response -&gt; {
+<span class="nc" id="L300">                    int id = -1;</span>
+                    try {
+<span class="nc" id="L302">                        id = response.getInt(&quot;id&quot;);</span>
+<span class="nc" id="L303">                    } catch (JSONException e) {</span>
+<span class="nc" id="L304">                        throw new RuntimeException(e);</span>
+<span class="nc" id="L305">                    }</span>
+<span class="nc bnc" id="L306" title="All 2 branches missed.">                    isBookmarked = id != -1;  // Set true if id is valid, false if -1</span>
+<span class="nc" id="L307">                    updateBookmarkIcon();</span>
+<span class="nc" id="L308">                },</span>
+<span class="nc" id="L309">                error -&gt; Log.e(&quot;fetchBookmark&quot;, &quot;Error fetching bookmark: &quot; + error.getMessage())</span>
+        );
+
+<span class="nc" id="L312">        requestQueue.add(jsonObjectRequest);</span>
+<span class="nc" id="L313">    }</span>
+
+    // Method to add a bookmark
+    private void addBookmark() {
+<span class="nc" id="L317">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/bookmarks/create&quot;;</span>
+<span class="nc" id="L318">        JSONObject bookmark = new JSONObject();</span>
+        try {
+<span class="nc" id="L320">            bookmark.put(&quot;userId&quot;, UserManager.getInstance().getUser().getUserID());</span>
+<span class="nc" id="L321">            bookmark.put(&quot;movieId&quot;, movieId);</span>
+<span class="nc" id="L322">        } catch (JSONException e) {</span>
+<span class="nc" id="L323">            e.printStackTrace();</span>
+<span class="nc" id="L324">        }</span>
+
+<span class="nc" id="L326">        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, bookmark,</span>
+<span class="nc" id="L327">                response -&gt; Toast.makeText(getContext(), &quot;Bookmarked!&quot;, Toast.LENGTH_SHORT).show(),</span>
+<span class="nc" id="L328">                error -&gt; Log.e(&quot;addBookmark&quot;, &quot;Error adding bookmark: &quot; + error.getMessage())</span>
+        );
+
+<span class="nc" id="L331">        requestQueue.add(request);</span>
+<span class="nc" id="L332">    }</span>
+
+    // Method to remove a bookmark
+    private void removeBookmark() {
+<span class="nc" id="L336">        int userID = UserManager.getInstance().getUser().getUserID();</span>
+<span class="nc" id="L337">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/bookmarks/delete/&quot; + userID + &quot;/&quot; + movieId;</span>
+
+<span class="nc" id="L339">        StringRequest request = new StringRequest(Request.Method.DELETE, url,</span>
+<span class="nc" id="L340">                response -&gt; Toast.makeText(getContext(), &quot;Bookmark removed!&quot;, Toast.LENGTH_SHORT).show(),</span>
+<span class="nc" id="L341">                error -&gt; Log.e(&quot;removeBookmark&quot;, &quot;Error removing bookmark: &quot; + error.getMessage())</span>
+        );
+
+<span class="nc" id="L344">        requestQueue.add(request);</span>
+<span class="nc" id="L345">    }</span>
+
+    private void submitComment(String commentText) {
+
+<span class="nc" id="L349">        User user = UserManager.getInstance().getUser();</span>
+
+<span class="nc" id="L351">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/comments/create&quot;;</span>
+<span class="nc" id="L352">        JSONObject comment = new JSONObject();</span>
+        try {
+<span class="nc" id="L354">            comment.put(&quot;userid&quot;, user.getUserID());</span>
+<span class="nc" id="L355">            comment.put(&quot;movieId&quot;, movieId);</span>
+<span class="nc" id="L356">            comment.put(&quot;text&quot;, commentText);</span>
+<span class="nc" id="L357">        } catch (JSONException e) {</span>
+<span class="nc" id="L358">            e.printStackTrace();</span>
+<span class="nc" id="L359">        }</span>
+
+<span class="nc" id="L361">        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, comment,</span>
+                response -&gt; {
+<span class="nc" id="L363">                    Toast.makeText(getContext(), &quot;Comment submitted!&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L364">                    fetchComments();  // Refresh comments on success</span>
+<span class="nc" id="L365">                },</span>
+                error -&gt; {
+<span class="nc" id="L367">                    Log.e(&quot;SubmitCommentError&quot;, &quot;Error submitting comment: &quot; + error.getMessage());</span>
+<span class="nc" id="L368">                    Toast.makeText(getContext(), &quot;Failed to submit comment. Please try again.&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L369">                }</span>
+        );
+
+<span class="nc" id="L372">        requestQueue.add(request);</span>
+<span class="nc" id="L373">    }</span>
+
+    /*private void likeComment(int commentID) {
+
+        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/comments/like/&quot; + commentID;  // Replace with API URL
+        JSONObject comment = new JSONObject();
+        try {
+            comment.put(&quot;userid&quot;, user.getUserID());
+            comment.put(&quot;movieId&quot;, movieId);
+            comment.put(&quot;text&quot;, commentText);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, comment,
+                response -&gt; fetchComments(),  // Refresh comments on success
+                error -&gt; Log.e(&quot;SubmitCommentError&quot;, &quot;Error submitting comment: &quot; + error.getMessage()));
+
+        Volley.newRequestQueue(getContext()).add(request);
+    }*/
+
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+<span class="nc" id="L396">        WebSocketManager.getInstance().sendMessage(movieId + &quot;&quot;);</span>
+<span class="nc" id="L397">    }</span>
+
+    @Override
+<span class="nc" id="L400">    public void onWebSocketMessage(String message) { }</span>
+
+    @Override
+<span class="nc" id="L403">    public void onWebSocketClose(int code, String reason, boolean remote) { }</span>
+
+    @Override
+<span class="nc" id="L406">    public void onWebSocketError(Exception ex) { }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

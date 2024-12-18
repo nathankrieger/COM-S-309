@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieDashboardFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.frontend</a> &gt; <span class="el_source">MovieDashboardFragment.java</span></div><h1>MovieDashboardFragment.java</h1><pre class="source lang-java linenums">package com.example.frontend;
+
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+
+import com.android.volley.VolleyError;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class MovieDashboardFragment extends Fragment {
+
+    private GridView movieGridView;
+    private MovieAdapter movieAdapter;
+    private JSONArray originalMoviesArray; // Store the original movie list for search
+
+    private Button advancedSearchButton;
+
+<span class="fc" id="L29">    public MovieDashboardFragment() {</span>
+        // Required empty public constructor
+<span class="fc" id="L31">    }</span>
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+<span class="fc" id="L37">        View view = inflater.inflate(R.layout.fragment_movie_dashboard, container, false);</span>
+
+<span class="fc" id="L39">        movieGridView = view.findViewById(R.id.movie_grid);  // Make sure this matches your GridView ID</span>
+<span class="fc" id="L40">        EditText searchBar = view.findViewById(R.id.searchBar); // Get the search bar</span>
+
+<span class="fc" id="L42">        advancedSearchButton = view.findViewById(R.id.advanced_search_btn);</span>
+<span class="fc" id="L43">        advancedSearchButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L46">                AdvancedSearchFragment advancedSearchFragment = AdvancedSearchFragment.newInstance();</span>
+<span class="nc" id="L47">                requireActivity().getSupportFragmentManager().beginTransaction()</span>
+<span class="nc" id="L48">                        .replace(R.id.fragment_container, advancedSearchFragment)</span>
+<span class="nc" id="L49">                        .addToBackStack(null)</span>
+<span class="nc" id="L50">                        .commit();</span>
+<span class="nc" id="L51">            }</span>
+        });
+        // Fetch the list of popular movies
+<span class="fc" id="L54">        MovieApiClient movieApiClient = new MovieApiClient(getContext());</span>
+        // Fetch popular movies
+<span class="fc" id="L56">        movieApiClient.fetchPopularMovies(new MovieApiClient.MovieApiResponseListener() {</span>
+            @Override
+            public void onSuccess(JSONObject response) {
+                try {
+<span class="fc" id="L60">                    JSONArray moviesArray = response.getJSONArray(&quot;results&quot;);</span>
+<span class="fc" id="L61">                    originalMoviesArray = moviesArray;  // Store the full list of movies</span>
+
+                    // Create the movie adapter with a click listener
+<span class="fc" id="L64">                    movieAdapter = new MovieAdapter(getContext(), moviesArray, new MovieAdapter.OnMovieClickListener() {</span>
+                        @Override
+                        public void onMovieClick(JSONArray moviesArray, int position) {
+                            try {
+<span class="nc" id="L68">                                JSONObject selectedMovie = (JSONObject) movieAdapter.getItem(position);</span>
+<span class="nc" id="L69">                                int movieId = selectedMovie.getInt(&quot;id&quot;);</span>
+
+<span class="nc" id="L71">                                MovieDetailFragment detailFragment = MovieDetailFragment.newInstance(movieId);</span>
+<span class="nc" id="L72">                                getFragmentManager().beginTransaction()</span>
+<span class="nc" id="L73">                                        .replace(R.id.fragment_container, detailFragment)</span>
+<span class="nc" id="L74">                                        .addToBackStack(null)</span>
+<span class="nc" id="L75">                                        .commit();</span>
+<span class="nc" id="L76">                            } catch (Exception e) {</span>
+<span class="nc" id="L77">                                e.printStackTrace();</span>
+<span class="nc" id="L78">                                Toast.makeText(getContext(), &quot;Error processing selected movie&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L79">                            }</span>
+<span class="nc" id="L80">                        }</span>
+                    });
+
+                    // Set the adapter for the GridView
+<span class="fc" id="L84">                    movieGridView.setAdapter(movieAdapter);</span>
+
+<span class="nc" id="L86">                } catch (Exception e) {</span>
+<span class="nc" id="L87">                    e.printStackTrace();</span>
+<span class="nc" id="L88">                    Toast.makeText(getContext(), &quot;Error parsing movie data&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L89">                }</span>
+<span class="fc" id="L90">            }</span>
+
+            @Override
+            public void onError(VolleyError error) {
+<span class="nc" id="L94">                error.printStackTrace();</span>
+<span class="nc" id="L95">                Toast.makeText(getContext(), &quot;Error fetching movies&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L96">            }</span>
+        });
+
+        // Set up the search functionality
+<span class="fc" id="L100">        searchBar.addTextChangedListener(new TextWatcher() {</span>
+            @Override
+<span class="nc" id="L102">            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}</span>
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+<span class="nc" id="L106">                String query = charSequence.toString().toLowerCase();</span>
+<span class="nc" id="L107">                filterMovies(query);</span>
+<span class="nc" id="L108">            }</span>
+
+            @Override
+<span class="nc" id="L111">            public void afterTextChanged(Editable editable) {}</span>
+        });
+
+<span class="fc" id="L114">        return view;</span>
+    }
+
+    private void filterMovies(String query) {
+        try {
+            // If the search query is empty, show all movies
+<span class="nc bnc" id="L120" title="All 2 branches missed.">            if (query.isEmpty()) {</span>
+<span class="nc" id="L121">                movieAdapter.updateMovies(originalMoviesArray);  // Show the full list again</span>
+<span class="nc" id="L122">                return;</span>
+            }
+
+            // Filter movies based on title
+<span class="nc" id="L126">            JSONArray filteredMovies = new JSONArray();</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">            for (int i = 0; i &lt; originalMoviesArray.length(); i++) {</span>
+<span class="nc" id="L128">                JSONObject movie = originalMoviesArray.getJSONObject(i);</span>
+<span class="nc" id="L129">                String title = movie.getString(&quot;title&quot;).toLowerCase();</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                if (title.contains(query)) {</span>
+<span class="nc" id="L131">                    filteredMovies.put(movie);</span>
+                }
+            }
+
+            // Update the adapter with the filtered list
+<span class="nc" id="L136">            movieAdapter.updateMovies(filteredMovies);</span>
+
+<span class="nc" id="L138">        } catch (Exception e) {</span>
+<span class="nc" id="L139">            e.printStackTrace();</span>
+<span class="nc" id="L140">            Toast.makeText(getContext(), &quot;Error filtering movies&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L141">        }</span>
+<span class="nc" id="L142">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.2</div></body></html>

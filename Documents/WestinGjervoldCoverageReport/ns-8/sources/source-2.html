@@ -1,0 +1,365 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > MovieController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone.Movies</a>
+</div>
+
+<h1>Coverage Summary for Class: MovieController (onetoone.Movies)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MovieController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    26.7%
+  </span>
+  <span class="absValue">
+    (4/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22.2%
+  </span>
+  <span class="absValue">
+    (4/18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone.Movies;
+&nbsp;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/movies&quot;)
+<b class="fc">&nbsp;public class MovieController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private MovieApiClient movieApiClient;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fetch popular movies
+&nbsp;     *
+&nbsp;     * @return A map containing popular movies data
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Fetch popular movies&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched popular movies&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Map.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/popular&quot;)
+&nbsp;    public Map&lt;String, Object&gt; getPopularMovies() {
+<b class="nc">&nbsp;        return movieApiClient.fetchPopularMovies();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Search movies by title
+&nbsp;     *
+&nbsp;     * @param query The title to search for
+&nbsp;     * @return A map containing movie search results
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Search movies by title&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched movie search results&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Map.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/search&quot;)
+&nbsp;    public Map&lt;String, Object&gt; searchMovies(@RequestParam String query) {
+<b class="nc">&nbsp;        return movieApiClient.searchMovies(query);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fetch movie details by ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the movie
+&nbsp;     * @return A map containing movie details
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Fetch movie details by ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched movie details&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Map.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public Map&lt;String, Object&gt; getMovieDetails(@PathVariable int id) {
+<b class="fc">&nbsp;        return movieApiClient.fetchMovieDetails(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fetch the movie image URL by ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the movie
+&nbsp;     * @return The image URL of the movie
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Fetch the movie image URL by ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched movie image URL&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = String.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/image/{id}&quot;)
+&nbsp;    public String getMovieImageUrl(@PathVariable int id) {
+<b class="nc">&nbsp;        return movieApiClient.getMovieImageUrl(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fetch similar movies by movie ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the movie
+&nbsp;     * @return A map containing similar movie data
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Fetch similar movies by movie ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched similar movies&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Map.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/similar/{id}&quot;)
+&nbsp;    public Map&lt;String, Object&gt; getSimilarMovies(@PathVariable int id) {
+<b class="nc">&nbsp;        return movieApiClient.fetchSimilarMovies(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fetch recommended movies by movie ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the movie
+&nbsp;     * @return A map containing recommended movie data
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Fetch recommended movies by movie ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched recommended movies&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Map.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/recommended/{id}&quot;)
+&nbsp;    public Map&lt;String, Object&gt; getRecommendedMovies(@PathVariable int id) {
+<b class="nc">&nbsp;        return movieApiClient.fetchRecommendedMovies(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fetch the movie title by ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the movie
+&nbsp;     * @return The title of the movie
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Fetch the movie title by ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched movie title&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = String.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/title/{id}&quot;)
+&nbsp;    public String getMovieTitle(@PathVariable int id) {
+<b class="nc">&nbsp;        return movieApiClient.getMovieTitle(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fetch the movie overview by ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the movie
+&nbsp;     * @return The overview of the movie
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Fetch the movie overview by ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched movie overview&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = String.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/overview/{id}&quot;)
+&nbsp;    public String getMovieOverview(@PathVariable int id) {
+<b class="nc">&nbsp;        return movieApiClient.getMovieOverview(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fetch the movie release date by ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the movie
+&nbsp;     * @return The release date of the movie
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Fetch the movie release date by ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched movie release date&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = String.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/release_date/{id}&quot;)
+&nbsp;    public String getMovieReleaseDate(@PathVariable int id) {
+<b class="nc">&nbsp;        return movieApiClient.getMovieReleaseDate(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fetch the movie rating by ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the movie
+&nbsp;     * @return The rating of the movie
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Fetch the movie rating by ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched movie rating&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Double.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/rating/{id}&quot;)
+&nbsp;    public double getMovieRating(@PathVariable int id) {
+<b class="nc">&nbsp;        return movieApiClient.getMovieRating(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get Person id by Name
+&nbsp;     *
+&nbsp;     * @param name The name to search for
+&nbsp;     * @return Person id
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get Person id by Name&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched person id&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Map.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/personId/{name}&quot;)
+&nbsp;    public int getPersonIdByName(@PathVariable String name) {
+<b class="fc">&nbsp;        return movieApiClient.getPersonIdByName(name);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get Keyword id by Name
+&nbsp;     *
+&nbsp;     * @param name The name to search for
+&nbsp;     * @return Keyword id
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get Keyword id by Name&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched keyword id&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Map.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/keywordId/{name}&quot;)
+&nbsp;    public int getKeywordIdByName(@PathVariable String name) {
+<b class="fc">&nbsp;        return movieApiClient.getKeywordIdByName(name);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get Genre id by Name
+&nbsp;     *
+&nbsp;     * @param name The name to search for
+&nbsp;     * @return Genre id
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get Genre id by Name&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched genre id&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Map.class)) })
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/genreId/{name}&quot;)
+&nbsp;    public int getGenreIdByName(@PathVariable String name) {
+<b class="nc">&nbsp;        return movieApiClient.getGenreIdByName(name);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Fetch the movie trailer URL by ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully fetched movie trailer URL&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = String.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Trailer not found&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/trailer/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; getTrailerByMovieId(@PathVariable int id) {
+<b class="nc">&nbsp;        String trailerUrl = movieApiClient.getMovieTrailerUrl(id);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (&quot;Trailer not available&quot;.equals(trailerUrl) || &quot;Error fetching trailer&quot;.equals(trailerUrl)) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(404).body(&quot;Trailer not found for movie ID: &quot; + id);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.ok(trailerUrl);</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 14:33</div>
+</div>
+</body>
+</html>

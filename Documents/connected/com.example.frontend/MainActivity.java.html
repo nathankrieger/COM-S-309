@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MainActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.frontend</a> &gt; <span class="el_source">MainActivity.java</span></div><h1>MainActivity.java</h1><pre class="source lang-java linenums">package com.example.frontend;
+
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.example.frontend.AboutFragment;
+import com.example.frontend.HomeFragment;
+import com.example.frontend.LoginFragment;
+import com.example.frontend.models.User;
+import com.google.android.material.navigation.NavigationView;
+
+/**
+ * MainActivity serves as the entry point for the app's navigation system,
+ * implementing a DrawerLayout and NavigationView for fragment management.
+ */
+<span class="fc" id="L26">public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {</span>
+
+    // Drawer layout for the navigation drawer
+    private DrawerLayout drawerLayout;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L33">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L34">        setContentView(R.layout.activity_main);</span>
+
+        // Set up the toolbar as the app bar
+<span class="fc" id="L37">        Toolbar toolbar = findViewById(R.id.toolbar);</span>
+<span class="fc" id="L38">        setSupportActionBar(toolbar);</span>
+
+        // Initialize the DrawerLayout and NavigationView
+<span class="fc" id="L41">        drawerLayout = findViewById(R.id.drawer_layout);</span>
+<span class="fc" id="L42">        NavigationView navigationView = findViewById(R.id.nav_view);</span>
+<span class="fc" id="L43">        navigationView.setNavigationItemSelectedListener(this);</span>
+
+        // Set up the ActionBarDrawerToggle to open/close the drawer with a toggle icon
+<span class="fc" id="L46">        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav);</span>
+<span class="fc" id="L47">        drawerLayout.addDrawerListener(toggle);</span>
+<span class="fc" id="L48">        toggle.syncState();</span>
+
+        // Load the default fragment (HomeFragment) if there is no saved state
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if (savedInstanceState == null) {</span>
+<span class="fc" id="L52">            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();</span>
+<span class="fc" id="L53">            navigationView.setCheckedItem(R.id.nav_home);</span>
+        }
+
+        // Update the header in the navigation drawer with user information
+<span class="fc" id="L57">        updateNavigationHeader(navigationView);</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Updates the navigation drawer header with the logged-in user's information.
+     * If no user is logged in, defaults to &quot;Guest&quot; and a generic email.
+     */
+    private void updateNavigationHeader(NavigationView navigationView) {
+        // Access the header view from the NavigationView
+<span class="fc" id="L66">        View headerView = navigationView.getHeaderView(0);</span>
+
+        // Locate TextViews in the header for displaying username and email
+<span class="fc" id="L69">        TextView userNameTextView = headerView.findViewById(R.id.userNameTextView);</span>
+<span class="fc" id="L70">        TextView userEmailTextView = headerView.findViewById(R.id.userEmailTextView);</span>
+
+        // Get user information from the UserManager
+<span class="fc" id="L73">        User user = UserManager.getInstance().getUser();</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (user != null) {</span>
+<span class="fc" id="L75">            userNameTextView.setText(user.getUsername());</span>
+<span class="fc" id="L76">            userEmailTextView.setText(user.getEmail());</span>
+        } else {
+<span class="fc" id="L78">            userNameTextView.setText(&quot;Guest&quot;);</span>
+<span class="fc" id="L79">            userEmailTextView.setText(&quot;guest@example.com&quot;);</span>
+        }
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * Handles navigation item selection events.
+     * Replaces the current fragment based on the selected menu item.
+     */
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+<span class="nc" id="L89">        int id = item.getItemId();</span>
+
+        // Switch between fragments based on the selected item
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (id == R.id.nav_home) {</span>
+<span class="nc" id="L93">            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        } else if (id == R.id.nav_roles) {</span>
+<span class="nc" id="L95">            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RolesFragment()).commit();</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        } else if (id == R.id.nav_about) {</span>
+<span class="nc" id="L97">            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        } else if (id == R.id.nav_logout) {</span>
+            // Handle the logout process
+<span class="nc" id="L100">            Toast.makeText(this, &quot;Logging out...&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L101">            logoutUser();</span>
+        }
+
+        // Close the navigation drawer after item selection
+<span class="nc" id="L105">        drawerLayout.closeDrawer(GravityCompat.START);</span>
+<span class="nc" id="L106">        return true;</span>
+    }
+
+    /**
+     * Logs the user out by clearing user data and navigating to the LoginFragment.
+     */
+    private void logoutUser() {
+        // Clear the current user data from UserManager
+<span class="nc" id="L114">        UserManager.getInstance().setUser(null);</span>
+
+        // Notify the user of a successful logout
+<span class="nc" id="L117">        Toast.makeText(this, &quot;Successfully logged out!&quot;, Toast.LENGTH_SHORT).show();</span>
+
+        // Replace the current fragment with the LoginFragment and add it to the back stack
+<span class="nc" id="L120">        getSupportFragmentManager().beginTransaction()</span>
+<span class="nc" id="L121">                .replace(R.id.fragment_container, new LoginFragment())</span>
+<span class="nc" id="L122">                .addToBackStack(null)</span>
+<span class="nc" id="L123">                .commit();</span>
+<span class="nc" id="L124">    }</span>
+
+    /**
+     * Handles back button presses.
+     * Closes the drawer if open; otherwise, performs the default back action.
+     */
+    @Override
+    public void onBackPressed() {
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {</span>
+<span class="nc" id="L133">            drawerLayout.closeDrawer(GravityCompat.START);</span>
+        } else {
+<span class="nc" id="L135">            super.onBackPressed();</span>
+        }
+<span class="nc" id="L137">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.2</div></body></html>

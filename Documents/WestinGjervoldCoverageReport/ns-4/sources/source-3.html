@@ -1,0 +1,100 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > BookmarksRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone.Bookmarks</a>
+</div>
+
+<h1>Coverage Summary for Class: BookmarksRepository (onetoone.Bookmarks)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">BookmarksRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone.Bookmarks;
+&nbsp;
+&nbsp;import onetoone.Users.User;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;
+&nbsp;/**
+&nbsp; *
+&nbsp; * @author Vivek Bengre
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;public interface BookmarksRepository extends JpaRepository&lt;Bookmark, Long&gt; {
+&nbsp;    Bookmark findById(int id);
+&nbsp;    Bookmark findByName(String username);
+&nbsp;    List&lt;Bookmark&gt; findByUser(User user);
+&nbsp;    List&lt;Bookmark&gt; findByUserId(int userId);
+&nbsp;
+&nbsp;    Bookmark findByUserIdAndMovieId(int userId, int movieId);
+&nbsp;
+&nbsp;    List&lt;Bookmark&gt; findByMovieId(int movieId);
+&nbsp;    @Transactional
+&nbsp;    void deleteById(int id);
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    void deleteByUserIdAndMovieId(int userId, int movieId);
+&nbsp;
+&nbsp;    boolean existsByName(String name);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 14:33</div>
+</div>
+</body>
+</html>

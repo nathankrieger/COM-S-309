@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RoleActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.frontend</a> &gt; <span class="el_source">RoleActivity.java</span></div><h1>RoleActivity.java</h1><pre class="source lang-java linenums">package com.example.frontend;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+<span class="nc" id="L21">public class RoleActivity extends AppCompatActivity {</span>
+
+    private EditText roleNameEditText; // To input role name
+    private EditText roleIdEditText; // To input role ID for update/delete
+    private Button createRoleButton; // Button to create role
+    private Button readRoleButton; // Button to read role
+    private Button updateRoleButton; // Button to update role
+    private Button deleteRoleButton; // Button to delete role
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L32">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L33">        setContentView(R.layout.activity_roles);</span>
+
+        // Initialize UI elements
+<span class="nc" id="L36">        roleNameEditText = findViewById(R.id.role_name_edt);</span>
+<span class="nc" id="L37">        roleIdEditText = findViewById(R.id.role_id_edt);</span>
+<span class="nc" id="L38">        createRoleButton = findViewById(R.id.create_role_btn);</span>
+<span class="nc" id="L39">        readRoleButton = findViewById(R.id.read_role_btn);</span>
+<span class="nc" id="L40">        updateRoleButton = findViewById(R.id.update_role_btn);</span>
+<span class="nc" id="L41">        deleteRoleButton = findViewById(R.id.delete_role_btn);</span>
+
+<span class="nc" id="L43">        createRoleButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L46">                String roleName = roleNameEditText.getText().toString();</span>
+<span class="nc" id="L47">                createRole(roleName);</span>
+<span class="nc" id="L48">            }</span>
+        });
+
+<span class="nc" id="L51">        readRoleButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L54">                String roleId = roleIdEditText.getText().toString();</span>
+<span class="nc" id="L55">                readRole(roleId);</span>
+<span class="nc" id="L56">            }</span>
+        });
+
+<span class="nc" id="L59">        updateRoleButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L62">                String roleId = roleIdEditText.getText().toString();</span>
+<span class="nc" id="L63">                String roleName = roleNameEditText.getText().toString();</span>
+<span class="nc" id="L64">                updateRole(roleId, roleName);</span>
+<span class="nc" id="L65">            }</span>
+        });
+
+<span class="nc" id="L68">        deleteRoleButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L71">                String roleId = roleIdEditText.getText().toString();</span>
+<span class="nc" id="L72">                deleteRole(roleId);</span>
+<span class="nc" id="L73">            }</span>
+        });
+<span class="nc" id="L75">    }</span>
+
+    private void createRole(String roleName) {
+<span class="nc" id="L78">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/roles&quot;;</span>
+
+<span class="nc" id="L80">        JSONObject jsonObject = new JSONObject();</span>
+        try {
+<span class="nc" id="L82">            jsonObject.put(&quot;roleName&quot;, roleName);</span>
+<span class="nc" id="L83">        } catch (JSONException e) {</span>
+<span class="nc" id="L84">            e.printStackTrace();</span>
+<span class="nc" id="L85">            Toast.makeText(getApplicationContext(), &quot;Error creating JSON object&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L86">            return;</span>
+<span class="nc" id="L87">        }</span>
+
+<span class="nc" id="L89">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="nc" id="L90">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject,</span>
+<span class="nc" id="L91">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L94">                        Toast.makeText(getApplicationContext(), &quot;Role created successfully&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L95">                    }</span>
+                },
+<span class="nc" id="L97">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L100">                        Toast.makeText(getApplicationContext(), &quot;Network error: &quot; + error.getMessage(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L101">                    }</span>
+                }
+        );
+<span class="nc" id="L104">        requestQueue.add(jsonObjectRequest);</span>
+<span class="nc" id="L105">    }</span>
+
+    private void readRole(String roleId) {
+<span class="nc" id="L108">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/roles/&quot; + roleId;</span>
+
+<span class="nc" id="L110">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="nc" id="L111">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,</span>
+<span class="nc" id="L112">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Assuming response contains the role name
+                        try {
+<span class="nc" id="L117">                            String roleName = response.getString(&quot;roleName&quot;);</span>
+<span class="nc" id="L118">                            Toast.makeText(getApplicationContext(), &quot;Role: &quot; + roleName, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L119">                        } catch (JSONException e) {</span>
+<span class="nc" id="L120">                            e.printStackTrace();</span>
+<span class="nc" id="L121">                            Toast.makeText(getApplicationContext(), &quot;Error processing response&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L122">                        }</span>
+<span class="nc" id="L123">                    }</span>
+                },
+<span class="nc" id="L125">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L128">                        Toast.makeText(getApplicationContext(), &quot;Network error: &quot; + error.getMessage(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L129">                    }</span>
+                }
+        );
+<span class="nc" id="L132">        requestQueue.add(jsonObjectRequest);</span>
+<span class="nc" id="L133">    }</span>
+
+    private void updateRole(String roleId, String roleName) {
+<span class="nc" id="L136">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/roles/&quot; + roleId;</span>
+
+<span class="nc" id="L138">        JSONObject jsonObject = new JSONObject();</span>
+        try {
+<span class="nc" id="L140">            jsonObject.put(&quot;roleName&quot;, roleName);</span>
+<span class="nc" id="L141">        } catch (JSONException e) {</span>
+<span class="nc" id="L142">            e.printStackTrace();</span>
+<span class="nc" id="L143">            Toast.makeText(getApplicationContext(), &quot;Error creating JSON object&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L144">            return;</span>
+<span class="nc" id="L145">        }</span>
+
+<span class="nc" id="L147">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="nc" id="L148">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,</span>
+<span class="nc" id="L149">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L152">                        Toast.makeText(getApplicationContext(), &quot;Role updated successfully&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L153">                    }</span>
+                },
+<span class="nc" id="L155">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L158">                        Toast.makeText(getApplicationContext(), &quot;Network error: &quot; + error.getMessage(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L159">                    }</span>
+                }
+        );
+<span class="nc" id="L162">        requestQueue.add(jsonObjectRequest);</span>
+<span class="nc" id="L163">    }</span>
+
+    private void deleteRole(String roleId) {
+<span class="nc" id="L166">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/roles/&quot; + roleId;</span>
+
+<span class="nc" id="L168">        RequestQueue requestQueue = Volley.newRequestQueue(this);</span>
+<span class="nc" id="L169">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null,</span>
+<span class="nc" id="L170">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L173">                        Toast.makeText(getApplicationContext(), &quot;Role deleted successfully&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L174">                    }</span>
+                },
+<span class="nc" id="L176">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L179">                        Toast.makeText(getApplicationContext(), &quot;Network error: &quot; + error.getMessage(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L180">                    }</span>
+                }
+        );
+<span class="nc" id="L183">        requestQueue.add(jsonObjectRequest);</span>
+<span class="nc" id="L184">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.2</div></body></html>

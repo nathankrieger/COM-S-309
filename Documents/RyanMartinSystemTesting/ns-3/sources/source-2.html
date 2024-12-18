@@ -1,0 +1,374 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BookmarksController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone.Bookmarks</a>
+</div>
+
+<h1>Coverage Summary for Class: BookmarksController (onetoone.Bookmarks)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BookmarksController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.1%
+  </span>
+  <span class="absValue">
+    (1/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.5%
+  </span>
+  <span class="absValue">
+    (3/40)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone.Bookmarks;
+&nbsp;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import onetoone.Users.User;
+&nbsp;import onetoone.Users.UserRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import org.springframework.web.server.ResponseStatusException;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/bookmarks&quot;)
+<b class="fc">&nbsp;public class BookmarksController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private BookmarksRepository bookmarksRepository;
+&nbsp;
+<b class="fc">&nbsp;    private String success = &quot;Success!&quot;;</b>
+<b class="fc">&nbsp;    private String failure = &quot;Failure&quot;;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get all bookmarks
+&nbsp;     *
+&nbsp;     * @return A list of all bookmarks
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get all bookmarks&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Found bookmarks&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Bookmark.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;No bookmarks found&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping
+&nbsp;    public List&lt;Bookmark&gt; getAllBookmarks() {
+<b class="nc">&nbsp;        return bookmarksRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get a bookmark by its ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the bookmark
+&nbsp;     * @return The bookmark with the specified ID
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get a bookmark by its ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Found the bookmark&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Bookmark.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Bookmark not found&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public Bookmark getBookmarkById(@PathVariable int id) {
+<b class="nc">&nbsp;        return bookmarksRepository.findById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get a bookmark by name
+&nbsp;     *
+&nbsp;     * @param name The name of the bookmark
+&nbsp;     * @return The bookmark with the specified name
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get a bookmark by name&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Found the bookmark&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Bookmark.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Bookmark not found&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/name/{name}&quot;)
+&nbsp;    public Bookmark getBookmarkByName(@PathVariable String name) {
+<b class="nc">&nbsp;        return bookmarksRepository.findByName(name);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get bookmarks by user ID
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user
+&nbsp;     * @return A list of bookmarks associated with the specified user
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get bookmarks by user ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Found bookmarks for the user&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Bookmark.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;No bookmarks found for the user&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/users/{userId}&quot;)
+&nbsp;    public List&lt;Bookmark&gt; getBookmarksByUserId(@PathVariable int userId) {
+<b class="nc">&nbsp;        List&lt;Bookmark&gt; bookmarks = bookmarksRepository.findByUserId(userId);</b>
+<b class="nc">&nbsp;        if (bookmarks.isEmpty()) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;No bookmarks found for user with ID &quot; + userId);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return bookmarks;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get bookmarks by user name
+&nbsp;     *
+&nbsp;     * @param userName The name of the user
+&nbsp;     * @return A list of bookmarks associated with the specified user name
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get bookmarks by user name&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Found bookmarks for the user&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Bookmark.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found or no bookmarks found for the user&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/users/name/{userName}&quot;)
+&nbsp;    public List&lt;Bookmark&gt; getBookmarksByUserName(@PathVariable String userName) {
+<b class="nc">&nbsp;        User user = userRepository.findByName(userName);</b>
+<b class="nc">&nbsp;        if (user == null) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;User not found with name &quot; + userName);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        List&lt;Bookmark&gt; bookmarks = bookmarksRepository.findByUserId(user.getId());</b>
+<b class="nc">&nbsp;        if (bookmarks.isEmpty()) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;No bookmarks found for user with name &quot; + userName);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return bookmarks;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get a bookmark by user ID and movie ID
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user
+&nbsp;     * @param movieId The ID of the movie
+&nbsp;     * @return The bookmark if it exists, or an error bookmark with ID -1 if not found
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Get bookmark by user ID and movie ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Found the bookmark&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Bookmark.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Bookmark not found&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(&quot;/{userId}/{movieId}&quot;)
+&nbsp;    public Bookmark getBookmarkByUserIdAndMovieId(@PathVariable int userId, @PathVariable int movieId) {
+<b class="nc">&nbsp;        Bookmark bookmark = bookmarksRepository.findByUserIdAndMovieId(userId, movieId);</b>
+<b class="nc">&nbsp;        if (bookmark != null) {</b>
+<b class="nc">&nbsp;            return bookmark;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Return a bookmark with an error ID if not found
+<b class="nc">&nbsp;        Bookmark err = new Bookmark();</b>
+<b class="nc">&nbsp;        err.setId(-1);</b>
+<b class="nc">&nbsp;        return err;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new bookmark
+&nbsp;     *
+&nbsp;     * @param bookmark The bookmark object to be created
+&nbsp;     * @param userId The ID of the user creating the bookmark
+&nbsp;     * @param movieId The ID of the movie being bookmarked
+&nbsp;     * @return A success message if the bookmark is created
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Create a new bookmark&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;201&quot;, description = &quot;Bookmark created successfully&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Bookmark.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/create/{userId}/{movieId}&quot;)
+&nbsp;    public String createBookmark(@RequestBody Bookmark bookmark, @PathVariable int userId, @PathVariable int movieId) {
+<b class="nc">&nbsp;        User user = userRepository.findById(userId);</b>
+<b class="nc">&nbsp;        if (user == null) {</b>
+<b class="nc">&nbsp;            return &quot;User not found&quot;; // Handle error appropriately</b>
+&nbsp;        }
+<b class="nc">&nbsp;        bookmark.setUser(user); // Set the userId for the bookmark</b>
+<b class="nc">&nbsp;        bookmarksRepository.save(bookmark);</b>
+<b class="nc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Update an existing bookmark
+&nbsp;     *
+&nbsp;     * @param id The ID of the bookmark to be updated
+&nbsp;     * @param request The updated bookmark data
+&nbsp;     * @return The updated bookmark
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Update an existing bookmark&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Bookmark updated successfully&quot;,
+&nbsp;                    content = { @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = Bookmark.class)) }),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Bookmark not found&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    public Bookmark updateBookmark(@PathVariable int id, @RequestBody Bookmark request) {
+<b class="nc">&nbsp;        Bookmark existingBookmark = bookmarksRepository.findById(id);</b>
+<b class="nc">&nbsp;        if (existingBookmark == null) {</b>
+<b class="nc">&nbsp;            throw new ResponseStatusException(HttpStatus.NOT_FOUND, &quot;Bookmark not found with ID &quot; + id);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Update fields
+<b class="nc">&nbsp;        existingBookmark.setName(request.getName());</b>
+<b class="nc">&nbsp;        existingBookmark.setMovieId(request.getMovieId());</b>
+&nbsp;        // Update other fields as needed
+&nbsp;
+<b class="nc">&nbsp;        bookmarksRepository.save(existingBookmark);</b>
+<b class="nc">&nbsp;        return existingBookmark;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete a bookmark by its ID
+&nbsp;     *
+&nbsp;     * @param id The ID of the bookmark to be deleted
+&nbsp;     * @return A success message
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Delete a bookmark by its ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Bookmark deleted successfully&quot;,
+&nbsp;                    content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Bookmark not found&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    public String deleteBookmark(@PathVariable int id) {
+<b class="nc">&nbsp;        bookmarksRepository.deleteById(id);</b>
+<b class="nc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete a bookmark by user ID and movie ID
+&nbsp;     *
+&nbsp;     * @param userId The ID of the user
+&nbsp;     * @param movieId The ID of the movie
+&nbsp;     * @return A success message
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Delete a bookmark by user ID and movie ID&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Bookmark deleted successfully&quot;,
+&nbsp;                    content = @Content)
+&nbsp;    })
+&nbsp;    @DeleteMapping(&quot;/{userId}/{movieId}&quot;)
+&nbsp;    public String deleteBookmarkByUserIdAndMovieId(@PathVariable int userId, @PathVariable int movieId) {
+<b class="nc">&nbsp;        bookmarksRepository.deleteByUserIdAndMovieId(userId, movieId);</b>
+<b class="nc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-25 15:49</div>
+</div>
+</body>
+</html>

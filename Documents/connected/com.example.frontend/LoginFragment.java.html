@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.frontend</a> &gt; <span class="el_source">LoginFragment.java</span></div><h1>LoginFragment.java</h1><pre class="source lang-java linenums">package com.example.frontend;
+
+// Imports for required Android and Java libraries
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.frontend.models.User;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * LoginFragment handles user login functionality, including username validation,
+ * sending login requests, navigating to other fragments, and handling server responses.
+ */
+<span class="fc" id="L40">public class LoginFragment extends Fragment {</span>
+
+    // UI components for login form
+    private EditText usernameEditText; // Input for username
+    private EditText passwordEditText; // Input for password
+    private Button loginButton; // Login action button
+    private Button signupButton; // Signup navigation button
+    private TextView forgotPasswordTextView; // Forgot password link
+
+    // For managing network requests
+    private RequestQueue requestQueue;
+
+    /**
+     * Inflates the login fragment UI and initializes components.
+     */
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+<span class="fc" id="L58">        View view = inflater.inflate(R.layout.fragment_login, container, false);</span>
+
+        // Bind UI components to their respective layout elements
+<span class="fc" id="L61">        usernameEditText = view.findViewById(R.id.login_username_edt);</span>
+<span class="fc" id="L62">        passwordEditText = view.findViewById(R.id.login_password_edt);</span>
+<span class="fc" id="L63">        loginButton = view.findViewById(R.id.login_login_btn);</span>
+<span class="fc" id="L64">        signupButton = view.findViewById(R.id.login_signup_btn);</span>
+<span class="fc" id="L65">        forgotPasswordTextView = view.findViewById(R.id.forgot_password_tv);</span>
+
+        // Initialize the Volley request queue
+<span class="fc" id="L68">        requestQueue = Volley.newRequestQueue(requireContext());</span>
+
+        // Disable login button initially
+<span class="fc" id="L71">        loginButton.setEnabled(false);</span>
+
+        // Add TextWatcher to enable login button only when input is valid
+<span class="fc" id="L74">        TextWatcher inputWatcher = new TextWatcher() {</span>
+            @Override
+<span class="fc" id="L76">            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}</span>
+
+            @Override
+<span class="fc" id="L79">            public void onTextChanged(CharSequence s, int start, int before, int count) {}</span>
+
+            @Override
+            public void afterTextChanged(Editable s) {
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">                boolean isUsernameValid = !usernameEditText.getText().toString().trim().isEmpty();</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                boolean isPasswordValid = !passwordEditText.getText().toString().trim().isEmpty();</span>
+<span class="pc bpc" id="L85" title="1 of 4 branches missed.">                loginButton.setEnabled(isUsernameValid &amp;&amp; isPasswordValid);</span>
+<span class="fc" id="L86">            }</span>
+        };
+<span class="fc" id="L88">        usernameEditText.addTextChangedListener(inputWatcher);</span>
+<span class="fc" id="L89">        passwordEditText.addTextChangedListener(inputWatcher);</span>
+
+        // Handle login button click
+<span class="fc" id="L92">        loginButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L93">            String username = usernameEditText.getText().toString();</span>
+<span class="fc" id="L94">            String password = passwordEditText.getText().toString();</span>
+<span class="fc" id="L95">            sendLoginRequest(username, password); // Initiates the login process</span>
+<span class="fc" id="L96">        });</span>
+
+        // Handle signup button click to navigate to SignupFragment
+<span class="fc" id="L99">        signupButton.setOnClickListener(v -&gt;</span>
+<span class="nc" id="L100">                requireActivity().getSupportFragmentManager().beginTransaction()</span>
+<span class="nc" id="L101">                        .replace(R.id.fragment_container, new SignupFragment())</span>
+<span class="nc" id="L102">                        .addToBackStack(null)</span>
+<span class="nc" id="L103">                        .commit()</span>
+        );
+
+        // Handle forgot password click
+<span class="fc" id="L107">        forgotPasswordTextView.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L108">            String enteredUsername = usernameEditText.getText().toString();</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">            if (enteredUsername.isEmpty()) {</span>
+<span class="nc" id="L110">                Toast.makeText(requireContext(), &quot;Please enter your username&quot;, Toast.LENGTH_LONG).show();</span>
+            } else {
+<span class="nc" id="L112">                checkUsernameExistence(enteredUsername); // Verifies username existence</span>
+            }
+<span class="nc" id="L114">        });</span>
+
+<span class="fc" id="L116">        return view;</span>
+    }
+
+    /**
+     * Sends a login request to the server using a POST request.
+     */
+    private void sendLoginRequest(final String username, final String password) {
+<span class="fc" id="L123">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/users/login&quot;;</span>
+
+        // Prepare the request body
+<span class="fc" id="L126">        Map&lt;String, String&gt; params = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L127">        params.put(&quot;name&quot;, username);</span>
+<span class="fc" id="L128">        params.put(&quot;password&quot;, password);</span>
+<span class="fc" id="L129">        JSONObject jsonBody = new JSONObject(params);</span>
+
+<span class="fc" id="L131">        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, url, jsonBody,</span>
+                response -&gt; {
+                    try {
+<span class="fc" id="L134">                        int userId = response.getInt(&quot;id&quot;);</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                        if (userId == -1) {</span>
+<span class="nc" id="L136">                            Toast.makeText(requireContext(), &quot;Invalid username or password&quot;, Toast.LENGTH_LONG).show();</span>
+                        } else {
+<span class="fc" id="L138">                            Toast.makeText(requireContext(), &quot;Login successful!&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="fc" id="L139">                            User user = new User(username, password);</span>
+<span class="fc" id="L140">                            user.setUserID(userId);</span>
+
+<span class="fc" id="L142">                            UserManager.getInstance().setUser(user); // Save user in singleton</span>
+
+                            // Navigate to MainActivity
+<span class="fc" id="L145">                            Intent intent = new Intent(getActivity(), MainActivity.class);</span>
+<span class="fc" id="L146">                            intent.putExtra(&quot;USERNAME&quot;, username);</span>
+<span class="fc" id="L147">                            intent.putExtra(&quot;USER_ID&quot;, userId);</span>
+<span class="fc" id="L148">                            startActivity(intent);</span>
+<span class="fc" id="L149">                            requireActivity().finish();</span>
+                        }
+<span class="nc" id="L151">                    } catch (JSONException e) {</span>
+<span class="nc" id="L152">                        e.printStackTrace();</span>
+<span class="nc" id="L153">                        Toast.makeText(requireContext(), &quot;Error parsing response&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L154">                    }</span>
+<span class="fc" id="L155">                },</span>
+<span class="nc" id="L156">                error -&gt; Toast.makeText(requireContext(), &quot;Login failed: &quot; + error.getMessage(), Toast.LENGTH_LONG).show()</span>
+        );
+
+<span class="fc" id="L159">        requestQueue.add(postRequest); // Add request to queue</span>
+<span class="fc" id="L160">    }</span>
+
+    /**
+     * Checks if a username exists on the server via a GET request.
+     */
+    private void checkUsernameExistence(final String username) {
+<span class="nc" id="L166">        String url = &quot;http://coms-3090-022.class.las.iastate.edu:8080/usersByName/&quot; + username;</span>
+
+<span class="nc" id="L168">        StringRequest getRequest = new StringRequest(Request.Method.GET, url,</span>
+                response -&gt; {
+                    try {
+<span class="nc" id="L171">                        JSONObject jsonResponse = new JSONObject(response);</span>
+<span class="nc" id="L172">                        int userId = jsonResponse.getInt(&quot;id&quot;);</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">                        if (userId == -1) {</span>
+<span class="nc" id="L174">                            Toast.makeText(requireContext(), &quot;Username does not exist&quot;, Toast.LENGTH_LONG).show();</span>
+                        } else {
+                            // Navigate to ForgotPasswordFragment
+<span class="nc" id="L177">                            ForgotPasswordFragment forgotPasswordFragment = new ForgotPasswordFragment();</span>
+<span class="nc" id="L178">                            Bundle bundle = new Bundle();</span>
+<span class="nc" id="L179">                            bundle.putString(&quot;USERNAME&quot;, username);</span>
+<span class="nc" id="L180">                            forgotPasswordFragment.setArguments(bundle);</span>
+
+<span class="nc" id="L182">                            requireActivity().getSupportFragmentManager().beginTransaction()</span>
+<span class="nc" id="L183">                                    .replace(R.id.fragment_container, forgotPasswordFragment)</span>
+<span class="nc" id="L184">                                    .addToBackStack(null)</span>
+<span class="nc" id="L185">                                    .commit();</span>
+                        }
+<span class="nc" id="L187">                    } catch (JSONException e) {</span>
+<span class="nc" id="L188">                        e.printStackTrace();</span>
+<span class="nc" id="L189">                        Toast.makeText(requireContext(), &quot;Error parsing response&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L190">                    }</span>
+<span class="nc" id="L191">                },</span>
+<span class="nc" id="L192">                error -&gt; Toast.makeText(requireContext(), &quot;Error checking username: &quot; + error.getMessage(), Toast.LENGTH_LONG).show()</span>
+        );
+
+<span class="nc" id="L195">        requestQueue.add(getRequest); // Add request to queue</span>
+<span class="nc" id="L196">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.2</div></body></html>

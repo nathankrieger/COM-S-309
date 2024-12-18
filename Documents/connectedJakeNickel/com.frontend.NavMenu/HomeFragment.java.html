@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HomeFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.frontend.NavMenu</a> &gt; <span class="el_source">HomeFragment.java</span></div><h1>HomeFragment.java</h1><pre class="source lang-java linenums">package com.frontend.NavMenu;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.androidexample.R;
+import com.frontend.MovieDashboardFragment;
+import com.frontend.models.User;
+import com.frontend.UserManager;  // Import UserManager to check if a user is logged in
+
+public class HomeFragment extends Fragment {
+
+<span class="fc" id="L18">    public HomeFragment() {</span>
+        // Required empty public constructor
+<span class="fc" id="L20">    }</span>
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+<span class="fc" id="L26">        View view = inflater.inflate(R.layout.fragment_home, container, false);</span>
+
+        // Get references to the buttons
+<span class="fc" id="L29">        Button loginButton = view.findViewById(R.id.main_login_btn);</span>
+<span class="fc" id="L30">        Button signupButton = view.findViewById(R.id.main_signup_btn);</span>
+
+        // Check if the user is logged in
+<span class="fc" id="L33">        User currentUser = UserManager.getInstance().getUser();</span>
+
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if (currentUser == null) {</span>
+            // User is not logged in, show the login/signup buttons
+<span class="fc" id="L37">            loginButton.setVisibility(View.VISIBLE);</span>
+<span class="fc" id="L38">            signupButton.setVisibility(View.VISIBLE);</span>
+
+            // Set up the Login button listener
+<span class="fc" id="L41">            loginButton.setOnClickListener(new View.OnClickListener() {</span>
+                @Override
+                public void onClick(View v) {
+                    // Replace current fragment with LoginFragment
+<span class="fc" id="L45">                    FragmentTransaction transaction = getFragmentManager().beginTransaction();</span>
+<span class="fc" id="L46">                    transaction.replace(R.id.fragment_container, new LoginFragment());  // Assuming container ID is fragment_container</span>
+<span class="fc" id="L47">                    transaction.addToBackStack(null);  // Add to back stack to allow back navigation</span>
+<span class="fc" id="L48">                    transaction.commit();</span>
+<span class="fc" id="L49">                }</span>
+            });
+
+            // Set up the Sign Up button listener
+<span class="fc" id="L53">            signupButton.setOnClickListener(new View.OnClickListener() {</span>
+                @Override
+                public void onClick(View v) {
+                    // Replace current fragment with SignupFragment
+<span class="fc" id="L57">                    FragmentTransaction transaction = getFragmentManager().beginTransaction();</span>
+<span class="fc" id="L58">                    transaction.replace(R.id.fragment_container, new SignupFragment());  // Assuming container ID is fragment_container</span>
+<span class="fc" id="L59">                    transaction.addToBackStack(null);  // Add to back stack to allow back navigation</span>
+<span class="fc" id="L60">                    transaction.commit();</span>
+<span class="fc" id="L61">                }</span>
+            });
+        } else {
+            // User is logged in, show the movie browsing dashboard
+<span class="nc" id="L65">            loginButton.setVisibility(View.GONE);</span>
+<span class="nc" id="L66">            signupButton.setVisibility(View.GONE);</span>
+
+            // Replace the current view with the movie browsing dashboard fragment
+<span class="nc" id="L69">            FragmentTransaction transaction = getFragmentManager().beginTransaction();</span>
+<span class="nc" id="L70">            transaction.replace(R.id.fragment_container, new MovieDashboardFragment());  // Assuming there's a MovieDashboardFragment</span>
+<span class="nc" id="L71">            transaction.commit();</span>
+        }
+
+<span class="fc" id="L74">        return view;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

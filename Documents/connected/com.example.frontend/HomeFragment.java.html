@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HomeFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.frontend</a> &gt; <span class="el_source">HomeFragment.java</span></div><h1>HomeFragment.java</h1><pre class="source lang-java linenums">package com.example.frontend;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.frontend.MovieDashboardFragment;
+import com.example.frontend.UserManager;
+import com.example.frontend.models.User;
+
+/**
+ * A fragment representing the home screen of the application.
+ * &lt;p&gt;
+ * This fragment handles user authentication states by displaying either login/signup buttons
+ * for unauthenticated users or transitioning to the movie browsing dashboard for authenticated users.
+ */
+public class HomeFragment extends Fragment {
+
+    /**
+     * Default constructor required for instantiating the fragment.
+     */
+<span class="fc" id="L27">    public HomeFragment() {</span>
+        // Required empty public constructor
+<span class="fc" id="L29">    }</span>
+
+    /**
+     * Inflates the layout for the fragment and initializes the UI based on the user's authentication state.
+     *
+     * @param inflater  The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container The parent view that this fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return The View for the fragment's UI.
+     */
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+<span class="fc" id="L43">        View view = inflater.inflate(R.layout.fragment_home, container, false);</span>
+
+        // Get references to the buttons
+<span class="fc" id="L46">        Button loginButton = view.findViewById(R.id.main_login_btn);</span>
+<span class="fc" id="L47">        Button signupButton = view.findViewById(R.id.main_signup_btn);</span>
+
+        // Check if the user is logged in
+<span class="fc" id="L50">        User currentUser = UserManager.getInstance().getUser();</span>
+
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (currentUser == null) {</span>
+            // User is not logged in, show the login/signup buttons
+<span class="fc" id="L54">            loginButton.setVisibility(View.VISIBLE);</span>
+<span class="fc" id="L55">            signupButton.setVisibility(View.VISIBLE);</span>
+
+            // Set up the Login button listener
+<span class="fc" id="L58">            loginButton.setOnClickListener(new View.OnClickListener() {</span>
+                @Override
+                public void onClick(View v) {
+                    // Replace current fragment with LoginFragment
+<span class="fc" id="L62">                    FragmentTransaction transaction = getFragmentManager().beginTransaction();</span>
+<span class="fc" id="L63">                    transaction.replace(R.id.fragment_container, new LoginFragment());  // Assuming container ID is fragment_container</span>
+<span class="fc" id="L64">                    transaction.addToBackStack(null);  // Add to back stack to allow back navigation</span>
+<span class="fc" id="L65">                    transaction.commit();</span>
+<span class="fc" id="L66">                }</span>
+            });
+
+            // Set up the Sign Up button listener
+<span class="fc" id="L70">            signupButton.setOnClickListener(new View.OnClickListener() {</span>
+                @Override
+                public void onClick(View v) {
+                    // Replace current fragment with SignupFragment
+<span class="nc" id="L74">                    FragmentTransaction transaction = getFragmentManager().beginTransaction();</span>
+<span class="nc" id="L75">                    transaction.replace(R.id.fragment_container, new SignupFragment());  // Assuming container ID is fragment_container</span>
+<span class="nc" id="L76">                    transaction.addToBackStack(null);  // Add to back stack to allow back navigation</span>
+<span class="nc" id="L77">                    transaction.commit();</span>
+<span class="nc" id="L78">                }</span>
+            });
+        } else {
+            // User is logged in, show the movie browsing dashboard
+<span class="fc" id="L82">            loginButton.setVisibility(View.GONE);</span>
+<span class="fc" id="L83">            signupButton.setVisibility(View.GONE);</span>
+
+            // Replace the current view with the movie browsing dashboard fragment
+<span class="fc" id="L86">            FragmentTransaction transaction = getFragmentManager().beginTransaction();</span>
+<span class="fc" id="L87">            transaction.replace(R.id.fragment_container, new MovieDashboardFragment());  // Assuming there's a MovieDashboardFragment</span>
+<span class="fc" id="L88">            transaction.commit();</span>
+        }
+
+<span class="fc" id="L91">        return view;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.2</div></body></html>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddBookmarkActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.frontend</a> &gt; <span class="el_source">AddBookmarkActivity.java</span></div><h1>AddBookmarkActivity.java</h1><pre class="source lang-java linenums">package com.frontend;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.androidexample.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+<span class="nc" id="L22">public class AddBookmarkActivity extends AppCompatActivity {</span>
+
+    private EditText bookmarkName, movieId;
+    private Button saveBookmarkButton;
+    private RequestQueue requestQueue;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L30">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L31">        setContentView(R.layout.activity_add_bookmark);</span>
+
+        // Initialize views
+<span class="nc" id="L34">        bookmarkName = findViewById(R.id.bookmarkName);</span>
+<span class="nc" id="L35">        movieId = findViewById(R.id.movieId);</span>
+<span class="nc" id="L36">        saveBookmarkButton = findViewById(R.id.saveBookmarkButton);</span>
+
+        // Initialize Volley request queue
+<span class="nc" id="L39">        requestQueue = Volley.newRequestQueue(this);</span>
+
+        // Set the click listener for the save button
+<span class="nc" id="L42">        saveBookmarkButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L45">                String name = bookmarkName.getText().toString();</span>
+<span class="nc" id="L46">                String movieIdStr = movieId.getText().toString();</span>
+
+<span class="nc bnc" id="L48" title="All 4 branches missed.">                if (!name.isEmpty() &amp;&amp; !movieIdStr.isEmpty()) {</span>
+<span class="nc" id="L49">                    int movieId = Integer.parseInt(movieIdStr);</span>
+<span class="nc" id="L50">                    addBookmark(name, movieId);  // Make API call to add the bookmark</span>
+<span class="nc" id="L51">                } else {</span>
+<span class="nc" id="L52">                    Toast.makeText(AddBookmarkActivity.this, &quot;Please fill in all fields&quot;, Toast.LENGTH_SHORT).show();</span>
+                }
+<span class="nc" id="L54">            }</span>
+        });
+<span class="nc" id="L56">    }</span>
+
+    // Method to add a bookmark by calling the API endpoint
+    private void addBookmark(String name, int movieId) {
+
+        // Replace with your actual API URL
+        // TODO - The actual endpoint needs reworking.
+<span class="nc" id="L63">        String url = &quot;https://9cffdc1e-96bc-4840-aeb5-6a52770b36d0.mock.pstmn.io/bookmarks/addbookmark&quot;;</span>
+
+        // Create JSON object for the bookmark details
+<span class="nc" id="L66">        JSONObject bookmarkJson = new JSONObject();</span>
+        try {
+<span class="nc" id="L68">            bookmarkJson.put(&quot;name&quot;, name);</span>
+<span class="nc" id="L69">            bookmarkJson.put(&quot;movieId&quot;, movieId);</span>
+
+            // Create a POST request
+<span class="nc" id="L72">            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, bookmarkJson,</span>
+<span class="nc" id="L73">                    new Response.Listener&lt;JSONObject&gt;() {</span>
+                        @Override
+                        public void onResponse(JSONObject response) {
+<span class="nc" id="L76">                            Toast.makeText(AddBookmarkActivity.this, &quot;Bookmark added successfully&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L77">                            finish(); // Close the activity after success</span>
+<span class="nc" id="L78">                        }</span>
+                    },
+<span class="nc" id="L80">                    new Response.ErrorListener() {</span>
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L83">                            Toast.makeText(AddBookmarkActivity.this, &quot;Error adding bookmark: &quot; + error.getMessage(), Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L84">                        }</span>
+                    });
+
+            // Add the request to the Volley request queue
+<span class="nc" id="L88">            requestQueue.add(request);</span>
+
+<span class="nc" id="L90">        } catch (JSONException e) {</span>
+<span class="nc" id="L91">            e.printStackTrace();</span>
+<span class="nc" id="L92">            Toast.makeText(AddBookmarkActivity.this, &quot;Error creating JSON for bookmark&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L93">        }</span>
+<span class="nc" id="L94">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

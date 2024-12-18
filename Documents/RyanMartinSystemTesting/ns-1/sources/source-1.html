@@ -1,0 +1,222 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Main</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone</a>
+</div>
+
+<h1>Coverage Summary for Class: Main (onetoone)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Main</td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (9/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (3/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70%
+  </span>
+  <span class="absValue">
+    (14/20)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Main$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">Main$$SpringCGLIB$$1</td>
+  </tr>
+  <tr>
+    <td class="name">Main$$SpringCGLIB$$2</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (9/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (3/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70%
+  </span>
+  <span class="absValue">
+    (14/20)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone;
+&nbsp;
+&nbsp;
+&nbsp;import onetoone.Movies.MovieApiClient;
+&nbsp;import org.springframework.boot.CommandLineRunner;
+&nbsp;import org.springframework.boot.SpringApplication;
+&nbsp;import org.springframework.boot.autoconfigure.SpringBootApplication;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+&nbsp;import onetoone.Users.User;
+&nbsp;import onetoone.Users.UserRepository;
+&nbsp;import onetoone.Bookmarks.Bookmark;
+&nbsp;import onetoone.Bookmarks.BookmarksRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;@SpringBootApplication
+&nbsp;@EnableJpaRepositories
+&nbsp;
+<b class="fc">&nbsp;public class Main {</b>
+&nbsp;
+&nbsp;    public static void main(String[] args) {
+<b class="nc">&nbsp;        SpringApplication.run(Main.class, args);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private MovieApiClient movieApiClient;
+&nbsp;
+&nbsp;    // Initialize User data
+&nbsp;    @Bean
+&nbsp;    CommandLineRunner initUser(UserRepository userRepository) {
+<b class="fc">&nbsp;        return args -&gt; {</b>
+<b class="fc">&nbsp;            createUserIfNotExists(userRepository, &quot;westin&quot;, &quot;westing@somemail.com&quot;, &quot;westin&quot;);</b>
+<b class="fc">&nbsp;            createUserIfNotExists(userRepository, &quot;Jane&quot;, &quot;jane@somemail.com&quot;, &quot;password&quot;);</b>
+<b class="fc">&nbsp;            createUserIfNotExists(userRepository, &quot;Justin&quot;, &quot;justin@somemail.com&quot;, &quot;password&quot;);</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    // Initialize Bookmark data
+&nbsp;    @Bean
+&nbsp;    CommandLineRunner initBookmarks(BookmarksRepository bookmarksRepository, UserRepository userRepository) {
+<b class="fc">&nbsp;        return args -&gt; {</b>
+<b class="fc">&nbsp;            User user = userRepository.findByName(&quot;westin&quot;); // Get a user to associate with the bookmark</b>
+<b class="fc">&nbsp;            createBookmarkIfNotExists(bookmarksRepository, &quot;Bookmark 1&quot;, 101, user);</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;    // Create bookmarks if they don&#39;t exist
+&nbsp;    private void createBookmarkIfNotExists(BookmarksRepository bookmarksRepository, String name, int movieId, User user) {
+<b class="pc">&nbsp;        if (!bookmarksRepository.existsByName(name)) {</b>
+<b class="nc">&nbsp;            Bookmark bookmark = new Bookmark(name, movieId, user);</b>
+<b class="nc">&nbsp;            bookmark.setUser(user); // Set the user for the bookmark</b>
+<b class="nc">&nbsp;            bookmarksRepository.save(bookmark);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Create users if they don&#39;t exist
+&nbsp;    private void createUserIfNotExists(UserRepository userRepository, String name, String email, String password) {
+<b class="pc">&nbsp;        if (!userRepository.existsByName(name)) {</b>
+<b class="nc">&nbsp;            User user = new User(name, email, password);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Run Movie API client and fetch movie details
+&nbsp;    @Bean
+&nbsp;    CommandLineRunner fetchMovieDetails() {
+<b class="fc">&nbsp;        return args -&gt; {</b>
+<b class="fc">&nbsp;            String movieDetails = movieApiClient.fetchMovieDetails(550).toString();  // Example movie ID for &quot;Fight Club&quot;</b>
+&nbsp;
+<b class="pc">&nbsp;            if (movieDetails != null) {</b>
+<b class="fc">&nbsp;                System.out.println(&quot;Movie Details: &quot; + movieDetails);</b>
+&nbsp;            }
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-25 15:49</div>
+</div>
+</body>
+</html>

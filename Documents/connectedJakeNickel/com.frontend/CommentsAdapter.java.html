@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CommentsAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.frontend</a> &gt; <span class="el_source">CommentsAdapter.java</span></div><h1>CommentsAdapter.java</h1><pre class="source lang-java linenums">package com.frontend;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.androidexample.R;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+// Comment
+public class CommentsAdapter extends RecyclerView.Adapter&lt;CommentsAdapter.ViewHolder&gt; {
+
+    private List&lt;String&gt; commentsList;
+    private Context context;
+    private boolean[] likedState; // Array to track if each comment is liked
+
+<span class="nc" id="L24">    public CommentsAdapter(List&lt;String&gt; commentsList, Context context) {</span>
+<span class="nc" id="L25">        this.commentsList = commentsList;</span>
+<span class="nc" id="L26">        this.context = context;</span>
+<span class="nc" id="L27">        likedState = new boolean[commentsList.size()]; // Initialize liked state for each comment</span>
+<span class="nc" id="L28">    }</span>
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView commentTextView;
+        public TextView likeCountTextView;
+        public ImageButton likeButton;
+
+        public ViewHolder(View view) {
+<span class="nc" id="L36">            super(view);</span>
+<span class="nc" id="L37">            commentTextView = view.findViewById(R.id.comment_text);</span>
+<span class="nc" id="L38">            likeCountTextView = view.findViewById(R.id.like_count);</span>
+<span class="nc" id="L39">            likeButton = view.findViewById(R.id.like_button);</span>
+<span class="nc" id="L40">        }</span>
+    }
+
+    @Override
+    public CommentsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+<span class="nc" id="L45">        View view = LayoutInflater.from(parent.getContext())</span>
+<span class="nc" id="L46">                .inflate(R.layout.comment_item, parent, false);</span>
+<span class="nc" id="L47">        return new ViewHolder(view);</span>
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+<span class="nc" id="L52">        String comment = commentsList.get(position);</span>
+<span class="nc" id="L53">        holder.commentTextView.setText(comment);</span>
+
+        // Initialize like count (example: starting at 0)
+<span class="nc" id="L56">        AtomicInteger likeCount = new AtomicInteger(Integer.parseInt(holder.likeCountTextView.getText().toString()));</span>
+
+        // Set initial like icon state
+<span class="nc" id="L59">        holder.likeButton.setImageResource(</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">                likedState[position] ? R.drawable.baseline_thumb_up_alt : R.drawable.baseline_thumb_up_off_alt);</span>
+
+        // Set up click listener for like button
+<span class="nc" id="L63">        holder.likeButton.setOnClickListener(v -&gt; {</span>
+            // Toggle liked state
+<span class="nc bnc" id="L65" title="All 2 branches missed.">            likedState[position] = !likedState[position];</span>
+
+            // Update like count and icon
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            if (likedState[position]) {</span>
+<span class="nc" id="L69">                likeCount.getAndIncrement();</span>
+<span class="nc" id="L70">                holder.likeButton.setImageResource(R.drawable.baseline_thumb_up_alt);</span>
+            } else {
+<span class="nc" id="L72">                likeCount.getAndDecrement();</span>
+<span class="nc" id="L73">                holder.likeButton.setImageResource(R.drawable.baseline_thumb_up_off_alt);</span>
+            }
+
+<span class="nc" id="L76">            holder.likeCountTextView.setText(String.valueOf(likeCount.get()));</span>
+<span class="nc" id="L77">        });</span>
+<span class="nc" id="L78">    }</span>
+
+    @Override
+    public int getItemCount() {
+<span class="nc" id="L82">        return commentsList.size();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

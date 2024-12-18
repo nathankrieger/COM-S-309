@@ -1,0 +1,223 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ViewCountWebsocketServer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone.Websocket</a>
+</div>
+
+<h1>Coverage Summary for Class: ViewCountWebsocketServer (onetoone.Websocket)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ViewCountWebsocketServer</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (3/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    21.7%
+  </span>
+  <span class="absValue">
+    (5/23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone.Websocket;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.Hashtable;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import jakarta.websocket.OnClose;
+&nbsp;import jakarta.websocket.OnError;
+&nbsp;import jakarta.websocket.OnMessage;
+&nbsp;import jakarta.websocket.OnOpen;
+&nbsp;import jakarta.websocket.Session;
+&nbsp;import jakarta.websocket.server.PathParam;
+&nbsp;import jakarta.websocket.server.ServerEndpoint;
+&nbsp;
+&nbsp;import onetoone.MovieViewCount.MovieViewCount;
+&nbsp;import onetoone.MovieViewCount.MovieViewCountRepository;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;/**
+&nbsp; * WebSocket server for tracking movie view counts in real time.
+&nbsp; *
+&nbsp; * Endpoint: ws://localhost:8080/viewCount
+&nbsp; */
+&nbsp;@ServerEndpoint(&quot;/viewCount/{movieId}&quot;)
+&nbsp;@Component
+<b class="fc">&nbsp;public class ViewCountWebsocketServer {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static Map&lt;Session, Integer&gt; sessionMovieMap = new Hashtable&lt;&gt;();</b>
+<b class="fc">&nbsp;    private static Map&lt;Integer, Session&gt; movieSessionMap = new Hashtable&lt;&gt;();</b>
+&nbsp;
+&nbsp;    // Server-side logger
+<b class="fc">&nbsp;    private final Logger logger = LoggerFactory.getLogger(ViewCountWebsocketServer.class);</b>
+&nbsp;
+&nbsp;    // Autowired repository for updating the movie view count in the database
+&nbsp;    private static MovieViewCountRepository movieViewCountRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    public void setMovieViewCountRepository(MovieViewCountRepository repository) {
+<b class="fc">&nbsp;        movieViewCountRepository = repository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is called when a new WebSocket connection is established.
+&nbsp;     *
+&nbsp;     * @param session represents the WebSocket session for the connected user
+&nbsp;     */
+&nbsp;    @OnOpen
+&nbsp;    public void onOpen(Session session, @PathParam(&quot;movieId&quot;) int movieId) throws IOException {
+&nbsp;        // Increment the view count in the database
+<b class="nc">&nbsp;        incrementMovieViewCount(movieId);</b>
+&nbsp;
+&nbsp;        // Log the new connection and the movie ID
+<b class="nc">&nbsp;        logger.info(&quot;[onOpen] User connected for Movie ID: &quot; + movieId);</b>
+&nbsp;
+&nbsp;        // Store session and movie ID mapping
+<b class="nc">&nbsp;        sessionMovieMap.put(session, movieId);</b>
+<b class="nc">&nbsp;        movieSessionMap.put(movieId, session);</b>
+&nbsp;
+&nbsp;        // Send the updated view count to the client
+<b class="nc">&nbsp;        int currentViewCount = getMovieViewCount(movieId);</b>
+<b class="nc">&nbsp;        session.getBasicRemote().sendText(&quot;Movie ID: &quot; + movieId + &quot;, Current View Count: &quot; + currentViewCount);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @OnMessage
+&nbsp;    public void onMessage(Session session, String message) throws IOException {
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    @OnClose
+&nbsp;    public void onClose(Session session) throws IOException {
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    @OnError
+&nbsp;    public void onError(Session session, Throwable throwable) {
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    private void incrementMovieViewCount(int movieId) {
+&nbsp;        // Check if the movie ID exists in the database
+&nbsp;        MovieViewCount movieViewCount;
+&nbsp;
+<b class="nc">&nbsp;        if (movieViewCountRepository.existsByApiID(movieId)) {</b>
+&nbsp;            // If the movie ID exists, fetch the current record
+<b class="nc">&nbsp;            movieViewCount = movieViewCountRepository.getReferenceByApiID(movieId);</b>
+&nbsp;            // Increment the existing view count
+<b class="nc">&nbsp;            movieViewCount.setViewCount(movieViewCount.getViewCount() + 1);</b>
+&nbsp;        } else {
+&nbsp;            // If no record exists, create a new one with a view count of 1
+<b class="nc">&nbsp;            movieViewCount = new MovieViewCount(movieId, 1);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Save the updated or new view count record to the database
+<b class="nc">&nbsp;        movieViewCountRepository.save(movieViewCount);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Gets the current view count for a specific movie from the database.
+&nbsp;     *
+&nbsp;     * @param movieId the ID of the movie.
+&nbsp;     * @return the current view count.
+&nbsp;     */
+&nbsp;    private int getMovieViewCount(int movieId) {
+&nbsp;        // Check if the movie view count record exists
+<b class="nc">&nbsp;        if (movieViewCountRepository.existsByApiID(movieId)) {</b>
+&nbsp;            // Fetch the record and return the view count
+<b class="nc">&nbsp;            MovieViewCount movieViewCount = movieViewCountRepository.getReferenceByApiID(movieId);</b>
+<b class="nc">&nbsp;            return movieViewCount.getViewCount();</b>
+&nbsp;        } else {
+&nbsp;            // Return 0 if no record is found
+<b class="nc">&nbsp;            return 0;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-04 14:33</div>
+</div>
+</body>
+</html>

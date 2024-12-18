@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- EditText for entering User ID to ban -->
+    <EditText
+        android:id="@+id/banUserIdEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter User ID to ban"
+        android:inputType="number" />
+
+    <!-- Button to ban the user -->
+    <Button
+        android:id="@+id/banButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ban User" />
+
+    <!-- EditText for entering User ID to update role -->
+    <EditText
+        android:id="@+id/updateUserRoleIdEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter User ID to update role"
+        android:inputType="number" />
+
+    <!-- EditText for entering new role -->
+    <EditText
+        android:id="@+id/updateUserRoleEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter new role" />
+
+    <!-- Button to update the role of the user -->
+    <Button
+        android:id="@+id/updateRoleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Promote/Demote" />
+</LinearLayout>

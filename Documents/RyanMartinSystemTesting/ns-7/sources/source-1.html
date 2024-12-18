@@ -1,0 +1,215 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MovieApiClient</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">onetoone.Movies</a>
+</div>
+
+<h1>Coverage Summary for Class: MovieApiClient (onetoone.Movies)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MovieApiClient</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (2/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10.8%
+  </span>
+  <span class="absValue">
+    (4/37)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package onetoone.Movies;
+&nbsp;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.web.client.RestTemplate;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class MovieApiClient {</b>
+&nbsp;
+&nbsp;    private static final String API_KEY = &quot;6d50549abc8f2adc5e2b30beefa50f42&quot;;
+<b class="fc">&nbsp;    private final RestTemplate restTemplate = new RestTemplate();</b>
+&nbsp;    private static final String BASE_IMAGE_URL = &quot;https://image.tmdb.org/t/p/w500&quot;;
+&nbsp;    // Fetch popular movies
+&nbsp;    public Map&lt;String, Object&gt; fetchPopularMovies() {
+<b class="nc">&nbsp;        String url = &quot;https://api.themoviedb.org/3/movie/popular?api_key=&quot; + API_KEY;</b>
+<b class="nc">&nbsp;        return restTemplate.getForObject(url, HashMap.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Search movies by title
+&nbsp;    public Map&lt;String, Object&gt; searchMovies(String query) {
+<b class="nc">&nbsp;        String url = &quot;https://api.themoviedb.org/3/search/movie?api_key=&quot; + API_KEY + &quot;&amp;query=&quot; + query;</b>
+<b class="nc">&nbsp;        return restTemplate.getForObject(url, HashMap.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Fetch movie details by ID
+&nbsp;    public Map&lt;String, Object&gt; fetchMovieDetails(int movieId) {
+<b class="fc">&nbsp;        String url = &quot;https://api.themoviedb.org/3/movie/&quot; + movieId + &quot;?api_key=&quot; + API_KEY;</b>
+<b class="fc">&nbsp;        return restTemplate.getForObject(url, HashMap.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public String getMovieImageUrl(int movieId) {
+<b class="nc">&nbsp;        String url = &quot;https://api.themoviedb.org/3/movie/&quot; + movieId + &quot;?api_key=&quot; + API_KEY;</b>
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; response = restTemplate.getForObject(url, HashMap.class);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        String posterPath = (String) response.get(&quot;poster_path&quot;);</b>
+<b class="nc">&nbsp;        if (posterPath != null &amp;&amp; !posterPath.isEmpty()) {</b>
+<b class="nc">&nbsp;            return BASE_IMAGE_URL + posterPath;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;Image not available&quot;; // Default message if no image is available</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getMovieOverview(int movieId) {
+<b class="nc">&nbsp;        String url = &quot;https://api.themoviedb.org/3/movie/&quot; + movieId + &quot;?api_key=&quot; + API_KEY;</b>
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; response = restTemplate.getForObject(url, HashMap.class);</b>
+&nbsp;
+&nbsp;        // Extract the overview if available
+<b class="nc">&nbsp;        String overview = (String) response.get(&quot;overview&quot;);</b>
+<b class="nc">&nbsp;        if (overview != null &amp;&amp; !overview.isEmpty()) {</b>
+<b class="nc">&nbsp;            return overview;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;Overview not available&quot;; // Default message if no overview is available</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public Map&lt;String, Object&gt; fetchSimilarMovies(int movieId) {
+<b class="nc">&nbsp;        String url = &quot;https://api.themoviedb.org/3/movie/&quot; + movieId + &quot;/similar?api_key=&quot; + API_KEY;</b>
+<b class="nc">&nbsp;        return restTemplate.getForObject(url, HashMap.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getMovieTitle(int movieId) {
+<b class="nc">&nbsp;        String url = &quot;https://api.themoviedb.org/3/movie/&quot; + movieId + &quot;?api_key=&quot; + API_KEY;</b>
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; response = restTemplate.getForObject(url, HashMap.class);</b>
+&nbsp;
+&nbsp;        // Extract the title if available
+<b class="nc">&nbsp;        String title = (String) response.get(&quot;title&quot;);</b>
+<b class="nc">&nbsp;        if (title != null &amp;&amp; !title.isEmpty()) {</b>
+<b class="nc">&nbsp;            return title;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;Title not available&quot;; // Default message if no title is available</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getMovieReleaseDate(int movieId) {
+<b class="nc">&nbsp;        String url = &quot;https://api.themoviedb.org/3/movie/&quot; + movieId + &quot;?api_key=&quot; + API_KEY;</b>
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; response = restTemplate.getForObject(url, HashMap.class);</b>
+&nbsp;
+&nbsp;        // Extract the release date if available
+<b class="nc">&nbsp;        String release_date = (String) response.get(&quot;release_date&quot;);</b>
+<b class="nc">&nbsp;        if (release_date != null &amp;&amp; !release_date.isEmpty()) {</b>
+<b class="nc">&nbsp;            return release_date;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;Release Date not available&quot;; // Default message if no release date is available</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getMovieRating(int movieId) {
+<b class="nc">&nbsp;        String url = &quot;https://api.themoviedb.org/3/movie/&quot; + movieId + &quot;?api_key=&quot; + API_KEY;</b>
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; response = restTemplate.getForObject(url, HashMap.class);</b>
+&nbsp;
+&nbsp;        // Extract the rating if available
+<b class="nc">&nbsp;        return (double) response.get(&quot;vote_average&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-25 15:49</div>
+</div>
+</body>
+</html>

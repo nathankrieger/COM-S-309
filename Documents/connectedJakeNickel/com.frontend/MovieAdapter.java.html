@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.frontend</a> &gt; <span class="el_source">MovieAdapter.java</span></div><h1>MovieAdapter.java</h1><pre class="source lang-java linenums">package com.frontend;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+import com.example.androidexample.R;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class MovieAdapter extends BaseAdapter {
+
+    private Context context;
+    private JSONArray moviesArray;
+    private JSONArray originalMoviesArray; // Store the original list of movies
+    private OnMovieClickListener listener;
+
+    // Constructor to accept the listener and movies
+<span class="nc" id="L25">    public MovieAdapter(Context context, JSONArray moviesArray, OnMovieClickListener listener) {</span>
+<span class="nc" id="L26">        this.context = context;</span>
+<span class="nc" id="L27">        this.moviesArray = moviesArray;</span>
+<span class="nc" id="L28">        this.originalMoviesArray = moviesArray;  // Store the original list for search functionality</span>
+<span class="nc" id="L29">        this.listener = listener;</span>
+<span class="nc" id="L30">    }</span>
+
+    @Override
+    public int getCount() {
+<span class="nc" id="L34">        return moviesArray.length();</span>
+    }
+
+    @Override
+    public Object getItem(int position) {
+        try {
+<span class="nc" id="L40">            return moviesArray.getJSONObject(position);</span>
+<span class="nc" id="L41">        } catch (Exception e) {</span>
+<span class="nc" id="L42">            e.printStackTrace();</span>
+<span class="nc" id="L43">            return null;</span>
+        }
+    }
+
+    @Override
+    public long getItemId(int position) {
+<span class="nc" id="L49">        return position;</span>
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        // Inflate the item_movie layout if it's not reused
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        if (convertView == null) {</span>
+<span class="nc" id="L56">            convertView = LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false);</span>
+        }
+
+        // Get the views from the layout
+<span class="nc" id="L60">        TextView movieTitleText = convertView.findViewById(R.id.movie_title);</span>
+<span class="nc" id="L61">        ImageView movieImageView = convertView.findViewById(R.id.movie_image);</span>
+
+        try {
+            // Get the movie data from the JSON array
+<span class="nc" id="L65">            JSONObject movie = moviesArray.getJSONObject(position);</span>
+<span class="nc" id="L66">            String title = movie.getString(&quot;title&quot;);</span>
+<span class="nc" id="L67">            String imageUrl = movie.getString(&quot;poster_path&quot;);  // Assuming the backend returns a poster path</span>
+
+            // Set the movie title
+<span class="nc" id="L70">            movieTitleText.setText(title);</span>
+
+            // Use Picasso to load the movie image
+<span class="nc" id="L73">            String imageUrlFull = &quot;https://image.tmdb.org/t/p/w500&quot; + imageUrl;  // Assuming this is the base URL for the image</span>
+<span class="nc" id="L74">            Picasso.get()</span>
+<span class="nc" id="L75">                    .load(imageUrlFull)</span>
+<span class="nc" id="L76">                    .placeholder(R.drawable.ic_launcher_foreground)  // A placeholder image</span>
+<span class="nc" id="L77">                    .into(movieImageView);</span>
+
+            // Set up the click listener for each movie item
+<span class="nc" id="L80">            convertView.setOnClickListener(v -&gt; {</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                if (listener != null) {</span>
+<span class="nc" id="L82">                    listener.onMovieClick(moviesArray, position);</span>
+                }
+<span class="nc" id="L84">            });</span>
+
+<span class="nc" id="L86">        } catch (Exception e) {</span>
+<span class="nc" id="L87">            e.printStackTrace();</span>
+<span class="nc" id="L88">        }</span>
+
+<span class="nc" id="L90">        return convertView;</span>
+    }
+
+    // Method to update the movies list based on the search query
+    public void updateMovies(JSONArray newMovies) {
+<span class="nc" id="L95">        this.moviesArray = newMovies;  // Set the filtered movies array</span>
+<span class="nc" id="L96">        notifyDataSetChanged();  // Notify the adapter that the data has changed</span>
+<span class="nc" id="L97">    }</span>
+
+    // Create an interface to handle item click events
+    public interface OnMovieClickListener {
+        void onMovieClick(JSONArray moviesArray, int position);
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

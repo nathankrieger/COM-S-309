@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AboutFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.frontend.NavMenu</a> &gt; <span class="el_source">AboutFragment.java</span></div><h1>AboutFragment.java</h1><pre class="source lang-java linenums">package com.frontend.NavMenu;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import org.java_websocket.handshake.ServerHandshake;
+
+import com.example.androidexample.R;
+import com.frontend.UserManager;
+import com.frontend.WebSocketListener;
+import com.frontend.WebSocketManager;
+import com.frontend.models.User;
+
+
+
+import java.text.BreakIterator;
+import java.util.Objects;
+
+public class AboutFragment extends Fragment implements WebSocketListener {
+
+    // UI elements
+    private TextView usernameTextView;
+    private TextView roleTextView;
+    private TextView bookmarksTextView;
+    private TextView messagesTextView;
+    private EditText dmEditText;
+    private Button sendDmButton;
+
+    // WebSocket instance for DM
+    private WebSocketManager webSocketManager;
+
+<span class="nc" id="L38">    public AboutFragment() {</span>
+        // Required empty public constructor
+<span class="nc" id="L40">    }</span>
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+<span class="nc" id="L45">        View view = inflater.inflate(R.layout.fragment_about, container, false);</span>
+
+        // Initialize the UI elements
+<span class="nc" id="L48">        usernameTextView = view.findViewById(R.id.usernameTextView);</span>
+//        roleTextView = view.findViewById(R.id.roleTextView);
+<span class="nc" id="L50">        bookmarksTextView = view.findViewById(R.id.bookmarksTextView);</span>
+<span class="nc" id="L51">        messagesTextView = view.findViewById(R.id.messagesTextView);</span>
+<span class="nc" id="L52">        dmEditText = view.findViewById(R.id.dmEditText);</span>
+<span class="nc" id="L53">        sendDmButton = view.findViewById(R.id.sendDmButton);</span>
+
+        // Fetch the user data from the UserManager
+<span class="nc" id="L56">        User user = UserManager.getInstance().getUser();</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (user != null) {</span>
+<span class="nc" id="L58">            usernameTextView.setText(&quot;Username: &quot; + user.getUsername());</span>
+            // roleTextView.setText(&quot;Role: &quot; + user.getRole());  // You can enable this when you have the role
+        }
+
+        // Connect WebSocket
+<span class="nc" id="L63">        webSocketManager = WebSocketManager.getInstance();</span>
+<span class="nc" id="L64">        webSocketManager.setWebSocketListener(this);</span>
+<span class="nc" id="L65">        webSocketManager.connectWebSocket(&quot;ws://coms-3090-022.class.las.iastate.edu:8080/AdminDM/&quot; + &quot;jakenickel&quot;);</span>
+
+        // Set up the button to send a DM
+<span class="nc" id="L68">        sendDmButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L69">            String message = dmEditText.getText().toString().trim();</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">            if (!message.isEmpty()) {</span>
+<span class="nc" id="L71">                sendDirectMessage(message);</span>
+<span class="nc" id="L72">                dmEditText.setText(&quot;&quot;); // Clear input after sending</span>
+            }
+<span class="nc" id="L74">        });</span>
+
+<span class="nc" id="L76">        return view;</span>
+    }
+
+    // Send the direct message over WebSocket
+    private void sendDirectMessage(String message) {
+<span class="nc" id="L81">        webSocketManager.getInstance().sendMessage(message);</span>
+
+<span class="nc" id="L83">    }</span>
+
+    // Handle incoming WebSocket messages (for direct messages)
+    @Override
+    public void onWebSocketMessage(String message) {
+        // Handle incoming WebSocket messages
+
+            // Split the message by first space to separate the recipient and message content
+<span class="nc" id="L91">            String[] splitMsg = message.split(&quot;\\s+&quot;, 2);</span>
+<span class="nc" id="L92">            String recipient = splitMsg[0].substring(1); // Remove '@' from the start</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">            String msgContent = splitMsg.length &gt; 1 ? splitMsg[1] : &quot;&quot;; // Get the rest of the message</span>
+
+            // Display the received message in the UI
+<span class="nc" id="L96">            requireActivity().runOnUiThread(() -&gt; {</span>
+<span class="nc" id="L97">                String currentMessages = messagesTextView.getText().toString();</span>
+<span class="nc" id="L98">                String newMessage = recipient + &quot;: &quot; + msgContent + &quot;\n&quot;;</span>
+<span class="nc" id="L99">                messagesTextView.setText(currentMessages + newMessage);</span>
+<span class="nc" id="L100">            });</span>
+
+
+
+
+
+<span class="nc" id="L106">    }</span>
+
+    @Override
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+        // Optionally handle WebSocket open event (not needed for this case)
+<span class="nc" id="L111">    }</span>
+
+    @Override
+    public void onWebSocketClose(int code, String reason, boolean remote) {
+        // Optionally handle WebSocket close event (not needed for this case)
+<span class="nc" id="L116">    }</span>
+
+    @Override
+    public void onWebSocketError(Exception ex) {
+        // Optionally handle WebSocket error event (not needed for this case)
+<span class="nc" id="L121">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span>Generated by the Android Gradle plugin 8.0.0</div></body></html>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdvancedSearchFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.frontend</a> &gt; <span class="el_source">AdvancedSearchFragment.java</span></div><h1>AdvancedSearchFragment.java</h1><pre class="source lang-java linenums">package com.example.frontend;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+
+public class AdvancedSearchFragment extends Fragment {
+
+    private static final String TAG = &quot;AdvancedSearchFragment&quot;;
+
+<span class="nc" id="L22">    public AdvancedSearchFragment() {</span>
+        // Required empty public constructor
+<span class="nc" id="L24">    }</span>
+
+    public static AdvancedSearchFragment newInstance() {
+<span class="nc" id="L27">        return new AdvancedSearchFragment();</span>
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+<span class="nc" id="L34">        return inflater.inflate(R.layout.fragment_advanced_search, container, false);</span>
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+<span class="nc" id="L39">        super.onViewCreated(view, savedInstanceState);</span>
+
+        // Initialize UI elements
+<span class="nc" id="L42">        EditText genreEditText = view.findViewById(R.id.search_by_genre);</span>
+<span class="nc" id="L43">        EditText yearEditText = view.findViewById(R.id.search_by_year);</span>
+<span class="nc" id="L44">        Button searchButton = view.findViewById(R.id.advanced_search_submit);</span>
+
+        // Set up the Search button logic
+<span class="nc" id="L47">        searchButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L48">            String genre = genreEditText.getText().toString().trim();</span>
+<span class="nc" id="L49">            String year = yearEditText.getText().toString().trim();</span>
+
+<span class="nc bnc" id="L51" title="All 4 branches missed.">            if (genre.isEmpty() &amp;&amp; year.isEmpty()) {</span>
+<span class="nc" id="L52">                Toast.makeText(getContext(), &quot;Please enter at least one filter&quot;, Toast.LENGTH_SHORT).show();</span>
+            } else {
+<span class="nc bnc" id="L54" title="All 2 branches missed.">                String message = &quot;Filters - Genre: &quot; + (genre.isEmpty() ? &quot;Any&quot; : genre)</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">                        + &quot;, Year: &quot; + (year.isEmpty() ? &quot;Any&quot; : year);</span>
+<span class="nc" id="L56">                Log.d(TAG, message);</span>
+
+                // Make API Request
+<span class="nc" id="L59">                makeApiRequest(genre, year);</span>
+            }
+<span class="nc" id="L61">        });</span>
+<span class="nc" id="L62">    }</span>
+
+    private void makeApiRequest(String genre, String year) {
+        // Replace this with actual API call logic (e.g., using Retrofit or Volley)
+        // Simulating API response for this example
+<span class="nc" id="L67">        boolean isSuccessful = true; // Simulate API success</span>
+<span class="nc" id="L68">        String resultData = &quot;Sample API Response Data&quot;; // Simulate API result</span>
+
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (isSuccessful) {</span>
+<span class="nc" id="L71">            openResultsFragment(resultData);</span>
+        } else {
+<span class="nc" id="L73">            Toast.makeText(getContext(), &quot;Failed to fetch results. Try again.&quot;, Toast.LENGTH_SHORT).show();</span>
+        }
+<span class="nc" id="L75">    }</span>
+
+    private void openResultsFragment(String data) {
+        // Pass data to AdvancedSearchResultsFragment
+<span class="nc" id="L79">        Fragment resultsFragment = AdvancedSearchResultsFragment.newInstance(data);</span>
+
+        // Replace the current fragment with AdvancedSearchResultsFragment
+<span class="nc" id="L82">        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();</span>
+<span class="nc" id="L83">        transaction.replace(R.id.fragment_container, resultsFragment); // R.id.fragment_container should match your container ID</span>
+<span class="nc" id="L84">        transaction.addToBackStack(null);</span>
+<span class="nc" id="L85">        transaction.commit();</span>
+<span class="nc" id="L86">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.2</div></body></html>
